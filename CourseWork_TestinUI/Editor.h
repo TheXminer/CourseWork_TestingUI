@@ -13,10 +13,13 @@ public:
 
 	void addTest(std::string nameOfSet, Question* question);
 	void deleteTest(std::string nameOfSet, int nOfTest);
+	void deleteTest(int testSetNumber, int nOfTest);
 	void editTest(std::string nameOfSet, int nOfTest, Question* question);
 	Question* getTest(std::string nameOfSet, int nOfTest);
 
 	void deleteSetOfTests(std::string nameOfSet);
+	void deleteSetOfTests(int setNumber);
 	std::vector<Question*>* getSetOfTests(std::string nameOfSet);
+	std::vector<Question*>* getSetOfTests(int setNumber);
 };
 

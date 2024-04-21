@@ -122,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Answer.cpp" />
+    <ClCompile Include="AuthorizeForm.cpp" />
     <ClCompile Include="ClientAction.cpp" />
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="MultipleChoiceQuestion.cpp" />
@@ -132,6 +133,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Answer.h" />
+    <ClInclude Include="AuthorizeForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="ClientAction.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="MultipleChoiceQuestion.h" />
@@ -144,16 +148,15 @@
     <ClInclude Include="StudentAnswers.h" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AuthorizeForm.resx">
+      <DependentUpon>AuthorizeForm.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="StartForm.resx">
       <DependentUpon>StartForm.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="ButtonIcons\iconDelete.png" />
-    <Image Include="ButtonIcons\iconEdit.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

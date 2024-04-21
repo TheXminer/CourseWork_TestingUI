@@ -35,12 +35,17 @@ void Editor::deleteTest(std::string nameOfSet, int nOfTest) {
 		for (int i = 0; i < nameOfTests.size(); i++) {
 			if (nameOfTests[i] == nameOfSet) {
 				nameOfTests.erase(nameOfTests.cbegin() + i);
+				delete setOfQuestions;
 				setOfTests.erase(nameOfSet);
 			}
 		}
 	}
-	catch (const std::exception& e) {
-	}
+	catch (const std::exception& e) {}
+}
+
+void Editor::deleteTest(int testNumber, int nOfTest)
+{
+	deleteTest(nameOfTests[testNumber], nOfTest);
 }
 
 void Editor::editTest(std::string nameOfSet, int nOfTest, Question* question) {
@@ -52,8 +57,7 @@ void Editor::editTest(std::string nameOfSet, int nOfTest, Question* question) {
 		setOfQuestions->at(nOfTest) = question;
 		delete toDelete;
 	}
-	catch (const std::exception& e) {
-	}
+	catch (const std::exception& e) {}
 }
 
 Question* Editor::getTest(std::string nameOfSet, int nOfTest) {
@@ -78,11 +82,20 @@ std::vector<Question*>* Editor::getSetOfTests(std::string nameOfSet) {
 	}
 }
 
+std::vector<Question*>* Editor::getSetOfTests(int setNumber)
+{
+	return getSetOfTests(nameOfTests[setNumber]);
+}
+
 void Editor::deleteSetOfTests(std::string nameOfSet) {
 	try {
 		setOfTests.erase(nameOfSet);
 		deleteTestSetName(nameOfSet);
 	}
-	catch (const std::exception& e) {
-	}
+	catch (const std::exception& e) {}
+}
+
+void Editor::deleteSetOfTests(int setNumber)
+{
+	deleteSetOfTests(nameOfTests[setNumber]);
 }

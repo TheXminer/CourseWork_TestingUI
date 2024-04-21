@@ -1,20 +1,20 @@
 #include "StartForm.h"
 #include "ClientAction.h"
-
+#include <msclr\marshal_cppstd.h>
 using namespace System;
 using namespace System::Windows::Forms;
-ClientAction* clientBack;
+ClientAction* userBack;
 [STAThreadAttribute]
 
 int main(array<String^>^) {
 	StudentAnswers studentAnswers;
 	Editor editor;
-	clientBack = new ClientAction();
-	clientBack->user = new ClientUser("sdsds");
-	clientBack->setAccess(AuthorizedAsStudent);
+	userBack = new ClientAction();
+	//userBack->user = new ClientUser("sdsds");
 	Application::SetCompatibleTextRenderingDefault(false);
 	Application::EnableVisualStyles;
 	CourseWorkTestingUI::StartForm form;
+	//CourseWorkTestingUI:: form1;
 	Application::Run(% form);
 	return 0;
 }
@@ -38,15 +38,15 @@ void CourseWorkTestingUI::StartForm::addTest()
 	Question* extraQuestion12 = new SingleChoiceQuestion(question, answers, 4, 2);
 	Question* extraQuestion13 = new SingleChoiceQuestion(question, answers, 4, 0);
 	Question* extraQuestion14 = new SingleChoiceQuestion(question, answers, 4, 1);
-	clientBack->editor->addTest("faf", extraQuestion1);
-	clientBack->editor->addTest("faf", extraQuestion2);
-	clientBack->editor->addTest("faf", extraQuestion11);
-	clientBack->editor->addTest("faf", extraQuestion12);
-	clientBack->editor->addTest("faf", extraQuestion13);
-	clientBack->editor->addTest("faf", extraQuestion3);
-	clientBack->editor->addTest("faf", extraQuestion14);
-	clientBack->editor->addTest("faf", extraQuestion4);
-	clientBack->user->showStartScreen(this);
+	userBack->editor->addTest("faf", extraQuestion1);
+	userBack->editor->addTest("faf", extraQuestion2);
+	userBack->editor->addTest("faf", extraQuestion11);
+	userBack->editor->addTest("faf", extraQuestion12);
+	userBack->editor->addTest("faf", extraQuestion13);
+	userBack->editor->addTest("faf", extraQuestion3);
+	userBack->editor->addTest("faf", extraQuestion14);
+	userBack->editor->addTest("faf", extraQuestion4);
+	userBack->user->showStartScreen(this);
 	//clientBack->setAccess(AuthorizedAsStudent);
 	//extraQuestion->displayQuestion(this, 2);
 	//extraQuestion->displayQuestion(this, 3);
@@ -92,7 +92,7 @@ void CourseWorkTestingUI::StartForm::createSingleChoiceTestGB(String^ question, 
 	this->Controls->Add(allGroupBoxes[number]);
 	allGroupBoxes[number]->ResumeLayout(false);
 	allGroupBoxes[number]->PerformLayout();
-	if (clientBack->checkAccess() == AuthorizedAsAdmin) {
+	if (userBack->user->checkAccess() == AuthorizedAsAdmin) {
 		createAdminChoiceTestGB(number);
 	}
 
@@ -139,7 +139,7 @@ void CourseWorkTestingUI::StartForm::createMultipleChoiceTestGB(String^ question
 	this->Controls->Add(allGroupBoxes[number]);
 	allGroupBoxes[number]->ResumeLayout(false);
 	allGroupBoxes[number]->PerformLayout();
-	if (clientBack->checkAccess() == AuthorizedAsAdmin) {
+	if (userBack->user->checkAccess() == AuthorizedAsAdmin) {
 		createAdminChoiceTestGB(number);
 	}
 
@@ -184,7 +184,7 @@ void CourseWorkTestingUI::StartForm::createAdminChoiceTestGB(int number)
 
 void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int number, int correctAnswerIndex)
 {
-	if (clientBack->checkAccess() != AuthorizedAsAdmin)
+	if (userBack->user->checkAccess() != AuthorizedAsAdmin)
 		return;
 	GroupBox^ groupBox = allGroupBoxes[number];
 	dynamic_cast<RadioButton^>(groupBox->Controls->Find(L"answerOption" + correctAnswerIndex, false)[0])->Checked = true;
@@ -197,7 +197,7 @@ void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int nu
 
 void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int number, std::vector<int> correctAnswerIndex)
 {
-	if (clientBack->checkAccess() != AuthorizedAsAdmin)
+	if (userBack->user->checkAccess() != AuthorizedAsAdmin)
 		return;
 	GroupBox^ groupBox = allGroupBoxes[number];
 	for (int answerIndex : correctAnswerIndex) {
@@ -258,14 +258,15 @@ void CourseWorkTestingUI::StartForm::createOpenTestGB(String^ question, int numb
 
 void CourseWorkTestingUI::StartForm::choosedDeleteSet(int testSetNumber)
 {
-	//delete set
-	//redraw all
+	userBack->editor->deleteSetOfTests(testSetNumber);
+	userBack->user->showStartScreen(this);
 }
 
 void CourseWorkTestingUI::StartForm::choosedStartSet(int testSetNumber)
 {
 	clearControls();
-	std::vector<Question*> testSet = *clientBack->editor->getSetOfTests(clientBack->editor->nameOfTests[testSetNumber]);
+	buttonReturn->Visible = true;
+	std::vector<Question*> testSet = *userBack->editor->getSetOfTests(userBack->editor->nameOfTests[testSetNumber]);
 	int number = 0;
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
 	for (auto curTest : testSet) {
@@ -278,7 +279,8 @@ void CourseWorkTestingUI::StartForm::choosedStartSet(int testSetNumber)
 void CourseWorkTestingUI::StartForm::choosedEditSet(int testSetNumber)
 {
 	clearControls();
-	std::vector<Question*> testSet = *clientBack->editor->getSetOfTests(clientBack->editor->nameOfTests[testSetNumber]);
+	buttonReturn->Visible = true;
+	std::vector<Question*> testSet = *userBack->editor->getSetOfTests(userBack->editor->nameOfTests[testSetNumber]);
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
 	int number = 0;
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
@@ -291,8 +293,12 @@ void CourseWorkTestingUI::StartForm::choosedEditSet(int testSetNumber)
 
 void CourseWorkTestingUI::StartForm::choosedDeleteTest(int testNumber)
 {
-	throw gcnew System::NotImplementedException();
-	//delete choosen test
+	std::string testSetName = userBack->editor->nameOfTests[choosenTestSet];
+	userBack->editor->deleteTest(choosenTestSet, testNumber);
+	if(userBack->editor->getSetOfTests(testSetName))
+		choosedEditSet(choosenTestSet);
+	else
+		userBack->user->showStartScreen(this);
 }
 
 void CourseWorkTestingUI::StartForm::choosedEditTest(int testSetNumber)
@@ -301,10 +307,15 @@ void CourseWorkTestingUI::StartForm::choosedEditTest(int testSetNumber)
 	//open window test creation
 }
 
+void CourseWorkTestingUI::StartForm::choosedReturn()
+{
+	userBack->user->showStartScreen(this);
+}
+
 void CourseWorkTestingUI::StartForm::showTestSets(void (*showSetFunc)(StartForm^, String^, int))
 {
 	clearControls();
-	std::vector<std::string> testSetsNames = clientBack->editor->nameOfTests;
+	std::vector<std::string> testSetsNames = userBack->editor->nameOfTests;
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSetsNames.size());
 	int counter = 0;
 	for (std::string curTestName : testSetsNames) {
@@ -312,6 +323,20 @@ void CourseWorkTestingUI::StartForm::showTestSets(void (*showSetFunc)(StartForm^
 		showSetFunc(this, testName, counter);
 		counter++;
 	}
+}
+
+void CourseWorkTestingUI::StartForm::authorization()
+{
+	userBack->logout();
+	AuthorizeForm^ authorizeForm = gcnew AuthorizeForm;
+	this->Hide();
+	authorizeForm->ShowDialog();
+	String^ userName = authorizeForm->getUserName();
+	this->Show();
+	userBack->login(msclr::interop::marshal_as<std::string>(userName));
+	delete authorizeForm;
+	userBack->user->showStartScreen(this);
+	userToolStripButton->Text = gcnew System::String(userBack->user->getUserName().c_str());
 }
 
 void CourseWorkTestingUI::StartForm::showSetsToClient()
@@ -326,12 +351,12 @@ void CourseWorkTestingUI::StartForm::showSetsToAdmin()
 
 void CourseWorkTestingUI::StartForm::clearControls()
 {
-	curY = 12;
+	curY = 30;
 	xTab = 12;
 	yStartMargin = 37;
 	groupBoxWidth = this->Size.Width - 30;
 	this->Controls->Clear();
 	if(allGroupBoxes)
 		delete[] allGroupBoxes;
-	//addTest();
+	showToolBar();
 }

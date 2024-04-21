@@ -51,6 +51,9 @@
     <ClCompile Include="ClientAction.cpp">
       <Filter>Source Files\TestsBack</Filter>
     </ClCompile>
+    <ClCompile Include="AuthorizeForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartForm.h">
@@ -80,18 +83,13 @@
     <ClInclude Include="ClientAction.h">
       <Filter>Header Files\TestsBack</Filter>
     </ClInclude>
+    <ClInclude Include="AuthorizeForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="ButtonIcons\iconDelete.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="ButtonIcons\iconEdit.png">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>

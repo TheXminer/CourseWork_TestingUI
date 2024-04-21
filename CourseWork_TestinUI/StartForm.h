@@ -1,6 +1,7 @@
 #pragma once
 #include <vcclr.h>
 #include <vector>
+#include "AuthorizeForm.h"
 namespace CourseWorkTestingUI {
 
 	using namespace System;
@@ -19,25 +20,30 @@ namespace CourseWorkTestingUI {
 	{
 		int curY;
 		int xTab;
-		Bitmap^ iconDelete;
-		Bitmap^ iconEdit;
-		Bitmap^ iconStart;
-		Bitmap^ iconDone;
-		Bitmap^ iconAdd;
 		int groupBoxWidth, yStartMargin;
 		array<GroupBox^, 1>^ allGroupBoxes;
 		int buttonSize = 40, buttonMargin = 20;
-
-
-
+		int choosenTestSet;
+	private: System::Windows::Forms::ToolStrip^ userToolStrip;
+	private: System::Windows::Forms::ToolStripMenuItem^ buttonExit;
+	private: System::Windows::Forms::ToolStripButton^ buttonReturn;
+	private: System::Windows::Forms::ToolStripSplitButton^ userToolStripButton;
+		   Bitmap^ iconDelete;
+		   Bitmap^ iconEdit;
+		   Bitmap^ iconStart;
+		   Bitmap^ iconDone;
+		   Bitmap^ iconAdd;
+		   Bitmap^ iconReturn;
+		   Bitmap^ iconExit;
+		   Bitmap^ iconProfile;
 	public:
 		StartForm(void)
 		{
 			InitializeComponent();
-			
+
 			//TODO: Add the constructor code here
 			//
-			curY = 12;
+			curY = 32;
 			xTab = 12;
 			yStartMargin = 37;
 			groupBoxWidth = this->Size.Width - 30;
@@ -48,6 +54,9 @@ namespace CourseWorkTestingUI {
 			iconStart = gcnew Bitmap("./ButtonIcons/iconStart.png");
 			iconAdd = gcnew Bitmap("./ButtonIcons/iconAdd.png");
 			iconDone = gcnew Bitmap("./ButtonIcons/iconDone.png");
+			iconReturn = gcnew Bitmap("./ButtonIcons/iconBack.png");
+			iconExit = gcnew Bitmap("./ButtonIcons/iconExit.png");
+			iconProfile = gcnew Bitmap("./ButtonIcons/iconProfile.png");
 			addTest();
 			//showTestSets(&adminShow);
 			//showTestSets();
@@ -60,7 +69,6 @@ namespace CourseWorkTestingUI {
 			//addSetTestNameGB("xcvgergwfwefsdgzcvsdfsdfsdfsd", 3);
 			//addSetTestNameGB("dfndghdrthrt", 4);
 			//addSetTestNameGB("sdhrtkdy,.jk,uk;iofghdfgasfg", 5);
-
 			//addNewGroupBox("Why?asdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsd", 14);
 			//addNewGroupBox("Why?", 14);
 			//array<String^>^ answers = { "blablablaas","sdsdsdsad","adssgasdasdasd","4das", "sadasdasd" };
@@ -108,6 +116,7 @@ namespace CourseWorkTestingUI {
 			this->ResumeLayout(false);
 
 		}
+		
 		void addTest();
 		//Array<GroupBox^
 
@@ -272,6 +281,63 @@ namespace CourseWorkTestingUI {
 			addButton->PerformLayout();
 		}
 		
+		void showToolBar() {
+			userToolStrip = gcnew ToolStrip();
+			buttonExit = gcnew ToolStripMenuItem();
+			buttonReturn = gcnew ToolStripButton();
+			userToolStripButton = gcnew ToolStripSplitButton();
+			userToolStrip->SuspendLayout();
+			// 
+			// userToolStrip
+			// 
+			userToolStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+				this->buttonReturn,
+					this->userToolStripButton
+			});
+			userToolStrip->Location = System::Drawing::Point(0, 0);
+			userToolStrip->Name = L"userToolStrip";
+			userToolStrip->Size = System::Drawing::Size(1203, 25);
+			userToolStrip->TabIndex = 0;
+			userToolStrip->Text = L"userToolStrip";
+			// 
+			// buttonReturn
+			// 
+			buttonReturn->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			buttonReturn->ImageTransparentColor = System::Drawing::Color::Magenta;
+			buttonReturn->Name = L"buttonReturn";
+			buttonReturn->Size = System::Drawing::Size(23, 22);
+			buttonReturn->Text = L"buttonReturn";
+			buttonReturn->Click += gcnew System::EventHandler(this, &StartForm::buttonReturn_Click);
+			buttonReturn->Visible = false;
+			// 
+			// userToolStripButton
+			// 
+			userToolStripButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			userToolStripButton->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { buttonExit });
+			userToolStripButton->ImageTransparentColor = System::Drawing::Color::Magenta;
+			userToolStripButton->Name = L"userToolStripButton";
+			userToolStripButton->Size = System::Drawing::Size(78, 22);
+			userToolStripButton->Text = L"UserName";
+			// 
+			// buttonExit
+			// 
+			buttonExit->ImageTransparentColor = System::Drawing::Color::Transparent;
+			buttonExit->Name = L"buttonExit";
+			buttonExit->Size = System::Drawing::Size(180, 22);
+			buttonExit->Text = L"Exit";
+			buttonExit->Click += gcnew System::EventHandler(this, &StartForm::buttonExit_Click);
+			//
+			//Icons
+			//
+			buttonReturn->Image = iconReturn;
+			buttonExit->Image = iconExit;
+			userToolStripButton->Image = iconProfile;
+			//show
+			this->Controls->Add(userToolStrip);
+			userToolStrip->ResumeLayout(false);
+			userToolStrip->PerformLayout();
+		}
+
 		GroupBox^ getGroupBox(int number) {
 			return allGroupBoxes[number];
 		}
@@ -282,7 +348,9 @@ namespace CourseWorkTestingUI {
 		void choosedEditSet(int testSetNumber);
 		void choosedDeleteTest(int testSetNumber);
 		void choosedEditTest(int testSetNumber);
+		void choosedReturn();
 		void showTestSets(void (*showSetFunc)(StartForm^, String^, int));
+		void authorization();
 		//void AddNewTest();
 		//void TestCreationWindow();
 		void showSetsToClient();
@@ -338,14 +406,15 @@ namespace CourseWorkTestingUI {
 		System::Void buttonEditTestSet_Click(System::Object^ sender, System::EventArgs^ e) {
 			Button^ clickedButton = dynamic_cast<Button^>(sender);
 			String^ name = clickedButton->Name->Remove(0, 1);
-			choosedEditSet(Convert::ToInt32(name));
+			choosenTestSet = Convert::ToInt32(name);
+			choosedEditSet(choosenTestSet);
 		}
 	private:
 		System::Void buttonDeleteTest_Click(System::Object^ sender, System::EventArgs^ e) {
 			Button^ clickedButton = dynamic_cast<Button^>(sender);
 			//TextBox^ text = allGroupBoxes[14]->Controls->Find("sdsd");
 			String^ name = clickedButton->Name->Remove(0, 1);
-			//choosedDeleteSet(Convert::ToInt32(name));
+			choosedDeleteTest(Convert::ToInt32(name));
 		}
 	private:
 		System::Void buttonEditTest_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -376,6 +445,14 @@ namespace CourseWorkTestingUI {
 			//Button^ clickedButton = dynamic_cast<Button^>(sender);
 			//String^ name = clickedButton->Name->Remove(0, 1);
 			//choosedStartSet(Convert::ToInt32(name));
+		}
+	private: 
+		System::Void buttonReturn_Click(System::Object^ sender, System::EventArgs^ e) {
+			choosedReturn();
+		}
+	private: 
+		System::Void buttonExit_Click(System::Object^ sender, System::EventArgs^ e) {
+			authorization();
 		}
 };
 }

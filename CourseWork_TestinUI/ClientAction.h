@@ -6,8 +6,9 @@
 #include <functional>
 
 enum status {
+    Nothing = -1,
     NonAuthorized,
-    AuthorizedAsStudent,
+    AuthorizedAsClient,
     AuthorizedAsAdmin
 };
 
@@ -20,38 +21,11 @@ class ViewAllMarksAction;
 
 class User abstract {
     std::string userName;
-    //int authorizeStatus = AuthorizedAsAdmin;
+protected:
+    int authorizeStatus;
 public:
-    User(std::string userName) : userName(userName) {}
-    //Editor* editor;
-    //StudentAnswers* studentAnswers;
-    virtual void showStartScreen(CourseWorkTestingUI::StartForm^ startForm) = 0;
-};
-class AdminUser : public User {
-public:
-    AdminUser(std::string userName) : User(userName) {};
-    void showStartScreen(CourseWorkTestingUI::StartForm^ startForm) override;
-};
-class ClientUser : public User {
-public:
-    ClientUser(std::string userName) : User(userName) {};
-    void showStartScreen(CourseWorkTestingUI::StartForm^ startForm) override;
-};
-
-class ClientAction {
-    std::string userName;
-    CurrentAction* action = nullptr;
-    int authorizeStatus = NonAuthorized;
-public:
-    User* user;
-    Editor* editor;
-    StudentAnswers* studentAnswers;
-    ClientAction();
-    ClientAction(CurrentAction* action, Editor* editor, StudentAnswers* studentAnswers);
-    //ClientAction(CurrentAction* action);
-
-    void setUserName(std::string userName) {
-        this->userName = userName;
+    User(std::string userName) : userName(userName) { 
+        authorizeStatus = Nothing; 
     }
     std::string getUserName() {
         return userName;
@@ -62,105 +36,134 @@ public:
     void setAccess(status status) {
         authorizeStatus = status;
     }
-
-    void setAction(CurrentAction* action);
-    void returnAction();
-    void start();
+    virtual void showStartScreen(CourseWorkTestingUI::StartForm^ form) = 0;
 };
-
-class CurrentAction abstract
-{
-protected:
-    ClientAction* client = nullptr;
-    CurrentAction* previousAction = nullptr;
+class AdminUser : public User {
 public:
-    static std::string choosedTeseSet; 
-    ~CurrentAction();
-    void setClient(ClientAction* client);
-    void setPreviousAction(CurrentAction* previousAction);
-    CurrentAction* getPreviousAction();
-    virtual void execute(int userChoice) = 0;
+    AdminUser(std::string userName) : User(userName) { authorizeStatus = AuthorizedAsAdmin; };
+    void showStartScreen(CourseWorkTestingUI::StartForm^ form) override;
+};
+class ClientUser : public User {
+public:
+    ClientUser(std::string userName) : User(userName) { authorizeStatus = AuthorizedAsClient; };
+    void showStartScreen(CourseWorkTestingUI::StartForm^ form) override;
+};
+class NonauthorizedUser : public User {
+public:
+    NonauthorizedUser() : User("no name") { authorizeStatus = NonAuthorized; }
+    void showStartScreen(CourseWorkTestingUI::StartForm^ form) override;
 };
 
-class AuthorizeAction : public CurrentAction
-{
+class ClientAction {
+    CurrentAction* action = nullptr;
+public:
+    User* user;
+    Editor* editor;
+    StudentAnswers* studentAnswers;
+    ClientAction();
+    ClientAction(CurrentAction* action, Editor* editor, StudentAnswers* studentAnswers);
     void login(std::string userName);
-public:
-    void execute(int userChoice);
+    void logout();
+    //ClientAction(CurrentAction* action);
+
+    //void setAction(CurrentAction* action);
+    //void returnAction();
+    //void start();
 };
 
-class AddTestAction : public CurrentAction {
-public:
-    Question* addTest();
-    void execute(int userChoice);
-};
-
-class AddSetAction : public CurrentAction {
-public:
-    void execute(int userChoice);
-};
-
-class DeleteTestAction :public CurrentAction {
-public:
-    void execute(int userChoice);
-};
-
-class ViewTestAction :public CurrentAction {
-public:
-    void execute(int userChoice);
-};
-
-class EditSetAction : public CurrentAction {
-public:
-    void execute(int userChoice);
-};
-
-class DeleteSetAction :public CurrentAction {
-public:
-    void execute(int userChoice);
-};
-
-class ViewAllMarksAction : public CurrentAction {
-    int sumOfMarks(std::vector<int>* marks);
-    void printMarks(std::vector<int>* marks);
-    void showMarks(int choice);
-public:
-    void execute(int userChoice);
-};
-
-class StartTestAction : public CurrentAction {
-    //int* randomizeNumbers(int size);
-    std::vector<int>* transformOrder(std::vector<int>* currentMarks, int* key);
-    void startTest(std::string testName);
-public:
-    void execute(int userChoice);
-};
-
-class ViewMyMarksAction : public CurrentAction {
-    int sumOfMarks(std::vector<int>* marks);
-    void printMarks(std::vector<int>* marks);
-public:
-    void execute(int userChoice);
-};
-
-class AdminAction : public CurrentAction
-{
-    enum AdminChoice {
-        StartTest = 1,
-        ViewMarks,
-        AddSetTest,
-        EditSetTest,
-        DeleteSetTest
-    };
-public:
-    void execute(int userChoice);
-};
-
-class UserAction : public CurrentAction {
-    enum AdminChoice {
-        StartTest = 1,
-        ViewMarks
-    };
-public:
-    void execute(int userChoice);
-};
+//class CurrentAction abstract
+//{
+//protected:
+//    ClientAction* client = nullptr;
+//    CurrentAction* previousAction = nullptr;
+//public:
+//    static std::string choosedTeseSet; 
+//    ~CurrentAction();
+//    void setClient(ClientAction* client);
+//    void setPreviousAction(CurrentAction* previousAction);
+//    CurrentAction* getPreviousAction();
+//    virtual void execute(int userChoice) = 0;
+//};
+//
+//class AuthorizeAction : public CurrentAction
+//{
+//    void login(std::string userName);
+//public:
+//    void execute(int userChoice);
+//};
+//
+//class AddTestAction : public CurrentAction {
+//public:
+//    Question* addTest();
+//    void execute(int userChoice);
+//};
+//
+//class AddSetAction : public CurrentAction {
+//public:
+//    void execute(int userChoice);
+//};
+//
+//class DeleteTestAction :public CurrentAction {
+//public:
+//    void execute(int userChoice);
+//};
+//
+//class ViewTestAction :public CurrentAction {
+//public:
+//    void execute(int userChoice);
+//};
+//
+//class EditSetAction : public CurrentAction {
+//public:
+//    void execute(int userChoice);
+//};
+//
+//class DeleteSetAction :public CurrentAction {
+//public:
+//    void execute(int userChoice);
+//};
+//
+//class ViewAllMarksAction : public CurrentAction {
+//    int sumOfMarks(std::vector<int>* marks);
+//    void printMarks(std::vector<int>* marks);
+//    void showMarks(int choice);
+//public:
+//    void execute(int userChoice);
+//};
+//
+//class StartTestAction : public CurrentAction {
+//    //int* randomizeNumbers(int size);
+//    std::vector<int>* transformOrder(std::vector<int>* currentMarks, int* key);
+//    void startTest(std::string testName);
+//public:
+//    void execute(int userChoice);
+//};
+//
+//class ViewMyMarksAction : public CurrentAction {
+//    int sumOfMarks(std::vector<int>* marks);
+//    void printMarks(std::vector<int>* marks);
+//public:
+//    void execute(int userChoice);
+//};
+//
+//class AdminAction : public CurrentAction
+//{
+//    enum AdminChoice {
+//        StartTest = 1,
+//        ViewMarks,
+//        AddSetTest,
+//        EditSetTest,
+//        DeleteSetTest
+//    };
+//public:
+//    void execute(int userChoice);
+//};
+//
+//class UserAction : public CurrentAction {
+//    enum AdminChoice {
+//        StartTest = 1,
+//        ViewMarks
+//    };
+//public:
+//    void execute(int userChoice);
+//};

@@ -37,21 +37,25 @@ public:
         authorizeStatus = status;
     }
     virtual void showStartScreen(CourseWorkTestingUI::StartForm^ form) = 0;
+    virtual void showTestButtons(CourseWorkTestingUI::StartForm^ form, int number) = 0;
 };
 class AdminUser : public User {
 public:
     AdminUser(std::string userName) : User(userName) { authorizeStatus = AuthorizedAsAdmin; };
     void showStartScreen(CourseWorkTestingUI::StartForm^ form) override;
+    void showTestButtons(CourseWorkTestingUI::StartForm^ form, int number) override;
 };
 class ClientUser : public User {
 public:
     ClientUser(std::string userName) : User(userName) { authorizeStatus = AuthorizedAsClient; };
     void showStartScreen(CourseWorkTestingUI::StartForm^ form) override;
+    void showTestButtons(CourseWorkTestingUI::StartForm^ form, int number) override {};
 };
 class NonauthorizedUser : public User {
 public:
     NonauthorizedUser() : User("no name") { authorizeStatus = NonAuthorized; }
     void showStartScreen(CourseWorkTestingUI::StartForm^ form) override;
+    void showTestButtons(CourseWorkTestingUI::StartForm^ form, int number) override {};
 };
 
 class ClientAction {
@@ -65,7 +69,6 @@ public:
     void login(std::string userName);
     void logout();
     //ClientAction(CurrentAction* action);
-
     //void setAction(CurrentAction* action);
     //void returnAction();
     //void start();

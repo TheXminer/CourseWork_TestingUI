@@ -32,8 +32,23 @@ void SingleChoiceQuestion::displayQuestion(CourseWorkTestingUI::StartForm^ start
     {
         answers[i] = gcnew System::String(allAnswers[i].getAnswer().c_str());
     }
-    startForm->createSingleChoiceTestGB(strQuestion, answers, number);
+    startForm->createSingleChoiceTestGB(strQuestion, answers, number, mark);
     startForm->markCorrectAnswer(allAnswers.size(), number, correctAnswer);
+}
+
+std::string SingleChoiceQuestion::getType() const
+{
+    return "Single Choice";
+}
+
+int SingleChoiceQuestion::checkAnswer(const std::string& answer)
+{
+    return checkAnswer(std::stoi(answer));
+}
+
+std::string SingleChoiceQuestion::getCorrectAnswers()
+{
+    return std::to_string(correctAnswer);
 }
 
 //void SingleChoiceQuestion::displayQuestionWhithButtons(CourseWorkTestinUI::StartForm^ startForm, int number)

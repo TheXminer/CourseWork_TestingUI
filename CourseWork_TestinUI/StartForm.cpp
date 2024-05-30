@@ -1,15 +1,16 @@
 #include "StartForm.h"
 #include "ClientAction.h"
+#include "AuthorizeForm.h"
+#include "TestEditForm.h"
+#include "TestSetEditForm.h"
 #include <msclr\marshal_cppstd.h>
 using namespace System;
 using namespace System::Windows::Forms;
-ClientAction* userBack;
+ClientAction* testBack;
 [STAThreadAttribute]
 
 int main(array<String^>^) {
-	StudentAnswers studentAnswers;
-	Editor editor;
-	userBack = new ClientAction();
+	testBack = new ClientAction();
 	//userBack->user = new ClientUser("sdsds");
 	Application::SetCompatibleTextRenderingDefault(false);
 	Application::EnableVisualStyles;
@@ -38,21 +39,23 @@ void CourseWorkTestingUI::StartForm::addTest()
 	Question* extraQuestion12 = new SingleChoiceQuestion(question, answers, 4, 2);
 	Question* extraQuestion13 = new SingleChoiceQuestion(question, answers, 4, 0);
 	Question* extraQuestion14 = new SingleChoiceQuestion(question, answers, 4, 1);
-	userBack->editor->addTest("faf", extraQuestion1);
-	userBack->editor->addTest("faf", extraQuestion2);
-	userBack->editor->addTest("faf", extraQuestion11);
-	userBack->editor->addTest("faf", extraQuestion12);
-	userBack->editor->addTest("faf", extraQuestion13);
-	userBack->editor->addTest("faf", extraQuestion3);
-	userBack->editor->addTest("faf", extraQuestion14);
-	userBack->editor->addTest("faf", extraQuestion4);
-	userBack->user->showStartScreen(this);
+	testBack->editor->addTest("faf", extraQuestion1);
+	testBack->editor->addTest("faf", extraQuestion2);
+	testBack->editor->addTest("faf", extraQuestion11);
+	testBack->editor->addTest("faf", extraQuestion12);
+	testBack->editor->addTest("faf", extraQuestion13);
+	testBack->editor->addTest("faf", extraQuestion3);
+	testBack->editor->addTest("faf", extraQuestion14);
+	testBack->editor->addTest("faf", extraQuestion4);
+	testBack->user->showStartScreen(this);
 	//clientBack->setAccess(AuthorizedAsStudent);
 	//extraQuestion->displayQuestion(this, 2);
 	//extraQuestion->displayQuestion(this, 3);
 }
 
-void CourseWorkTestingUI::StartForm::createSingleChoiceTestGB(String^ question, array<String^>^ answers, int number)
+
+
+void CourseWorkTestingUI::StartForm::createSingleChoiceTestGB(String^ question, array<String^>^ answers, int number, int mark)
 {
 	allGroupBoxes[number] = gcnew GroupBox();
 	int curControlY = yStartMargin, controlHeight = 29;
@@ -66,15 +69,7 @@ void CourseWorkTestingUI::StartForm::createSingleChoiceTestGB(String^ question, 
 	allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, 227);
 	allGroupBoxes[number]->Text = Convert::ToString(number + 1);
 
-	Label^ labelQuestion = gcnew Label();
-	allGroupBoxes[number]->Controls->Add(labelQuestion);
-	labelQuestion->AutoSize = true;
-	labelQuestion->Location = Drawing::Point(6, yStartMargin);
-	labelQuestion->MaximumSize = System::Drawing::Size(groupBoxWidth - 12, 0);
-	labelQuestion->Name = L"labelQuestion";
-	labelQuestion->Size = Drawing::Size(116, 25);
-	labelQuestion->Text = question;
-	curControlY += labelQuestion->Size.Height + 20;
+	showTopTestInfo(question, curControlY, number, mark);
 
 	for (int i = 0; i < answers->Length; i++) {
 		currControls[i] = gcnew RadioButton;
@@ -89,17 +84,18 @@ void CourseWorkTestingUI::StartForm::createSingleChoiceTestGB(String^ question, 
 		curControlY += 6 + currControls[i]->Size.Height;
 	}
 	allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, curControlY + 15);
-	this->Controls->Add(allGroupBoxes[number]);
+	controlPanel->Controls->Add(allGroupBoxes[number]);
 	allGroupBoxes[number]->ResumeLayout(false);
 	allGroupBoxes[number]->PerformLayout();
-	if (userBack->user->checkAccess() == AuthorizedAsAdmin) {
+	/*if (userBack->user->checkAccess() == AuthorizedAsAdmin) {
 		createAdminChoiceTestGB(number);
-	}
+	}*/
+	testBack->user->showTestButtons(this, number);
 
 	curY += allGroupBoxes[number]->Size.Height;
 }
 
-void CourseWorkTestingUI::StartForm::createMultipleChoiceTestGB(String^ question, array<String^>^ answers, int number)
+void CourseWorkTestingUI::StartForm::createMultipleChoiceTestGB(String^ question, array<String^>^ answers, int number, int mark)
 {
 	allGroupBoxes[number] = gcnew GroupBox();
 	int curControlY = yStartMargin, controlHeight = 29;
@@ -113,15 +109,7 @@ void CourseWorkTestingUI::StartForm::createMultipleChoiceTestGB(String^ question
 	allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, 227);
 	allGroupBoxes[number]->Text = Convert::ToString(number + 1);
 
-	Label^ labelQuestion = gcnew Label();
-	allGroupBoxes[number]->Controls->Add(labelQuestion);
-	labelQuestion->AutoSize = true;
-	labelQuestion->Location = Drawing::Point(6, yStartMargin);
-	labelQuestion->MaximumSize = System::Drawing::Size(groupBoxWidth - 12, 0);
-	labelQuestion->Name = L"labelQuestion";
-	labelQuestion->Size = Drawing::Size(116, 25);
-	labelQuestion->Text = question;
-	curControlY += labelQuestion->Size.Height + 20;
+	showTopTestInfo(question, curControlY, number, mark);
 
 	for (int i = 0; i < answers->Length; i++) {
 		currControls[i] = gcnew CheckBox;
@@ -136,10 +124,10 @@ void CourseWorkTestingUI::StartForm::createMultipleChoiceTestGB(String^ question
 		curControlY += 6 + currControls[i]->Size.Height;
 	}
 	allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, curControlY + 15);
-	this->Controls->Add(allGroupBoxes[number]);
+	controlPanel->Controls->Add(allGroupBoxes[number]);
 	allGroupBoxes[number]->ResumeLayout(false);
 	allGroupBoxes[number]->PerformLayout();
-	if (userBack->user->checkAccess() == AuthorizedAsAdmin) {
+	if (testBack->user->checkAccess() == AuthorizedAsAdmin) {
 		createAdminChoiceTestGB(number);
 	}
 
@@ -182,9 +170,100 @@ void CourseWorkTestingUI::StartForm::createAdminChoiceTestGB(int number)
 	editButton->Click += gcnew System::EventHandler(this, &StartForm::buttonEditTest_Click);
 }
 
+void CourseWorkTestingUI::StartForm::adminShowTestSetName(String^ testName, int number)
+{
+	allGroupBoxes[number] = gcnew GroupBox();
+	Label^ labelTestName;
+	Button^ editSetButton;
+	Button^ deleteButton;
+	Button^ editNameButton;
+	Button^ viewResultsButton;
+
+	labelTestName = gcnew Label();
+	deleteButton = gcnew Button();
+	editSetButton = gcnew Button();
+	editNameButton = gcnew Button();
+	viewResultsButton = gcnew Button();
+	//
+	// GroupBoxQ
+	//
+	allGroupBoxes[number]->Controls->Add(labelTestName);
+	allGroupBoxes[number]->Controls->Add(deleteButton);
+	allGroupBoxes[number]->Controls->Add(editSetButton);
+	allGroupBoxes[number]->Controls->Add(editNameButton);
+	allGroupBoxes[number]->Controls->Add(viewResultsButton);
+	allGroupBoxes[number]->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+		static_cast<System::Byte>(204)));
+	allGroupBoxes[number]->Location = Drawing::Point(12, curY);
+	allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, 131);
+	allGroupBoxes[number]->Text = Convert::ToString(number + 1);
+	//
+	// Label
+	//
+	labelTestName->AutoSize = true;
+	labelTestName->Location = Drawing::Point(6, yStartMargin);
+	labelTestName->MaximumSize = System::Drawing::Size(groupBoxWidth - 4 * (buttonMargin + buttonSize) - buttonMargin, 0);
+	labelTestName->Name = L"labelQuestion";
+	labelTestName->Size = Drawing::Size(116, 25);
+	labelTestName->Text = testName;
+	//
+	// DeleteButton
+	//
+	deleteButton->BackgroundImage = iconDelete;
+	deleteButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+	deleteButton->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
+	deleteButton->ForeColor = System::Drawing::Color::Transparent;
+	deleteButton->Location = System::Drawing::Point(groupBoxWidth - buttonMargin - buttonSize, 33);
+	deleteButton->Name = L"D" + Convert::ToString(number);
+	deleteButton->Size = System::Drawing::Size(buttonSize, buttonSize);
+	deleteButton->Click += gcnew System::EventHandler(this, &StartForm::buttonDeleteTestSet_Click);
+	//
+	// ViewResultsButton
+	//
+	viewResultsButton->BackgroundImage = iconResults;
+	viewResultsButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+	viewResultsButton->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
+	viewResultsButton->ForeColor = System::Drawing::Color::Transparent;
+	viewResultsButton->Location = System::Drawing::Point(groupBoxWidth - 2 * (buttonMargin + buttonSize), 33);
+	viewResultsButton->Name = L"V" + Convert::ToString(number);
+	viewResultsButton->Size = System::Drawing::Size(buttonSize, buttonSize);
+	viewResultsButton->Click += gcnew System::EventHandler(this, &StartForm::buttonViewResults_Click);
+	//
+	// editSetButton
+	//
+	editSetButton->BackgroundImage = iconView;
+	editSetButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+	editSetButton->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
+	editSetButton->ForeColor = System::Drawing::Color::Transparent;
+	editSetButton->Location = System::Drawing::Point(groupBoxWidth - 3 * (buttonMargin + buttonSize), 33);
+	editSetButton->Name = L"E" + Convert::ToString(number);
+	editSetButton->Size = System::Drawing::Size(buttonSize, buttonSize);
+	editSetButton->Click += gcnew System::EventHandler(this, &StartForm::buttonEditTestSet_Click);
+	//
+	// EditNameButton
+	//
+	editNameButton->BackgroundImage = iconEdit;
+	editNameButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+	editNameButton->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
+	editNameButton->ForeColor = System::Drawing::Color::Transparent;
+	editNameButton->Location = System::Drawing::Point(groupBoxWidth - 4 * (buttonMargin + buttonSize), 33);
+	editNameButton->Name = L"N" + Convert::ToString(number);
+	editNameButton->Size = System::Drawing::Size(buttonSize, buttonSize);
+	editNameButton->Click += gcnew System::EventHandler(this, &StartForm::buttonEditTestSetName_Click);
+	//
+	// Show
+	//
+	allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, yStartMargin + 20 + labelTestName->Size.Height + 20);
+	controlPanel->Controls->Add(allGroupBoxes[number]);
+	allGroupBoxes[number]->ResumeLayout(false);
+	allGroupBoxes[number]->PerformLayout();
+
+	curY += allGroupBoxes[number]->Size.Height;
+}
+
 void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int number, int correctAnswerIndex)
 {
-	if (userBack->user->checkAccess() != AuthorizedAsAdmin)
+	if (testBack->user->checkAccess() != AuthorizedAsAdmin)
 		return;
 	GroupBox^ groupBox = allGroupBoxes[number];
 	dynamic_cast<RadioButton^>(groupBox->Controls->Find(L"answerOption" + correctAnswerIndex, false)[0])->Checked = true;
@@ -197,7 +276,7 @@ void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int nu
 
 void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int number, std::vector<int> correctAnswerIndex)
 {
-	if (userBack->user->checkAccess() != AuthorizedAsAdmin)
+	if (testBack->user->checkAccess() != AuthorizedAsAdmin)
 		return;
 	GroupBox^ groupBox = allGroupBoxes[number];
 	for (int answerIndex : correctAnswerIndex) {
@@ -249,24 +328,176 @@ void CourseWorkTestingUI::StartForm::createOpenTestGB(String^ question, int numb
 	// Show
 	//
 	allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, yStartMargin + 20 + labelQuestion->Size.Height + 31 + 15);
-	this->Controls->Add(allGroupBoxes[number]);
+	controlPanel->Controls->Add(allGroupBoxes[number]);
 	allGroupBoxes[number]->ResumeLayout(false);
 	allGroupBoxes[number]->PerformLayout();
 
 	curY += allGroupBoxes[number]->Size.Height;
 }
 
+void CourseWorkTestingUI::StartForm::clientShowTestSetName(String^ testName, int number)
+{
+	allGroupBoxes[number] = gcnew GroupBox();
+	Label^ labelTestName;
+	Button^ startButton;
+
+	labelTestName = gcnew Label();
+	startButton = gcnew Button();
+
+	allGroupBoxes[number]->Controls->Add(labelTestName);
+	allGroupBoxes[number]->Controls->Add(startButton);
+	allGroupBoxes[number]->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+		static_cast<System::Byte>(204)));
+	allGroupBoxes[number]->Location = Drawing::Point(12, curY);
+	allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, 131);
+	allGroupBoxes[number]->Text = Convert::ToString(number + 1);
+	//
+	// Label
+	//
+	labelTestName->AutoSize = true;
+	labelTestName->Location = Drawing::Point(6, yStartMargin);
+	labelTestName->MaximumSize = System::Drawing::Size(groupBoxWidth - (buttonMargin + buttonSize) - buttonMargin, 0);
+	labelTestName->Name = L"labelQuestion";
+	labelTestName->Size = Drawing::Size(116, 25);
+	labelTestName->Text = testName;
+	//
+	// DeleteButton
+	//
+	if (/*isTestPassed*/testBack->studentAnswers->isTestPassed(testBack->user->getUserName(), msclr::interop::marshal_as<std::string>(testName)))
+	{
+		startButton->BackgroundImage = iconDone;
+		startButton->Click += gcnew System::EventHandler(this, &StartForm::buttonViewMyMarks_Click);
+	}
+	else
+	{
+		startButton->BackgroundImage = iconStart;
+		startButton->Click += gcnew System::EventHandler(this, &StartForm::buttonStartTestSet_Click);
+	}
+	startButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+	startButton->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
+	startButton->ForeColor = System::Drawing::Color::Transparent;
+	startButton->Location = System::Drawing::Point(groupBoxWidth - buttonMargin - buttonSize, 33);
+	startButton->Name = L"S" + Convert::ToString(number);
+	startButton->Size = System::Drawing::Size(buttonSize, buttonSize);
+	//
+	// Show
+	//
+	allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, yStartMargin + 20 + labelTestName->Size.Height + 20);
+	controlPanel->Controls->Add(allGroupBoxes[number]);
+	allGroupBoxes[number]->ResumeLayout(false);
+	allGroupBoxes[number]->PerformLayout();
+
+	curY += allGroupBoxes[number]->Size.Height;
+}
+
+void CourseWorkTestingUI::StartForm::createFinishButton()
+{
+	Button^ finishButton = gcnew Button();
+
+	finishButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+		static_cast<System::Byte>(204)));
+	finishButton->Location = System::Drawing::Point(12, curY);
+	finishButton->Name = L"F";
+	finishButton->Size = System::Drawing::Size(buttonSize * 4, buttonSize);
+	finishButton->TabIndex = 0;
+	finishButton->Text = L"Finish";
+	finishButton->UseVisualStyleBackColor = true;
+
+	controlPanel->Controls->Add(finishButton);
+	curY += finishButton->Size.Height;
+	finishButton->PerformLayout();
+}
+
+void CourseWorkTestingUI::StartForm::createAddButton(System::EventHandler^ addEvent)
+{
+	Button^ addButton = gcnew Button();
+	addButton->BackgroundImage = iconAdd;
+	addButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+	addButton->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
+	addButton->ForeColor = System::Drawing::Color::Transparent;
+	addButton->Location = System::Drawing::Point(12, curY);
+	addButton->Name = L"A";
+	addButton->Size = System::Drawing::Size(buttonSize, buttonSize);
+	addButton->Click += addEvent;
+	//addButton->Click += gcnew System::EventHandler(this, addEvent);
+	addButton->UseVisualStyleBackColor = true;
+	curY += addButton->Size.Height;
+
+	controlPanel->Controls->Add(addButton);
+	addButton->PerformLayout();
+}
+void CourseWorkTestingUI::StartForm::showToolBar() {
+	userToolStrip = gcnew ToolStrip();
+	buttonExit = gcnew ToolStripMenuItem();
+	buttonReturn = gcnew ToolStripButton();
+	userToolStripButton = gcnew ToolStripSplitButton();
+	userToolStrip->SuspendLayout();
+	// 
+	// userToolStrip
+	// 
+	userToolStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+		this->buttonReturn,
+			this->userToolStripButton
+	});
+	userToolStrip->Location = System::Drawing::Point(0, 0);
+	userToolStrip->Name = L"userToolStrip";
+	userToolStrip->Size = System::Drawing::Size(1203, 25);
+	userToolStrip->TabIndex = 0;
+	userToolStrip->Dock = DockStyle::Top;
+	userToolStrip->Text = L"userToolStrip";
+	// 
+	// buttonReturn
+	// 
+	buttonReturn->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+	buttonReturn->ImageTransparentColor = System::Drawing::Color::Magenta;
+	buttonReturn->Name = L"buttonReturn";
+	buttonReturn->Size = System::Drawing::Size(23, 22);
+	buttonReturn->Text = L"buttonReturn";
+	buttonReturn->Click += gcnew System::EventHandler(this, &StartForm::buttonReturn_Click);
+	buttonReturn->Visible = false;
+	// 
+	// userToolStripButton
+	// 
+	userToolStripButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+	userToolStripButton->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { buttonExit });
+	userToolStripButton->ImageTransparentColor = System::Drawing::Color::Magenta;
+	userToolStripButton->Name = L"userToolStripButton";
+	userToolStripButton->Size = System::Drawing::Size(78, 22);
+	userToolStripButton->Text = gcnew System::String(testBack->user->getUserName().c_str());
+	//userToolStripButton->Margin = System::Windows::Forms::Padding(0, 1, 20, 2);
+	// 
+	// buttonExit
+	// 
+	buttonExit->ImageTransparentColor = System::Drawing::Color::Transparent;
+	buttonExit->Name = L"buttonExit";
+	buttonExit->Size = System::Drawing::Size(180, 22);
+	buttonExit->Text = L"Exit";
+	buttonExit->Click += gcnew System::EventHandler(this, &StartForm::buttonExit_Click);
+	//
+	//Icons
+	//
+	buttonReturn->Image = iconReturn;
+	buttonExit->Image = iconExit;
+	userToolStripButton->Image = iconProfile;
+	//show
+	toolBarPanel->Controls->Add(userToolStrip);
+	this->Controls->Add(toolBarPanel);
+	this->Controls->Add(controlPanel);
+	userToolStrip->ResumeLayout(false);
+	userToolStrip->PerformLayout();
+}
+
 void CourseWorkTestingUI::StartForm::choosedDeleteSet(int testSetNumber)
 {
-	userBack->editor->deleteSetOfTests(testSetNumber);
-	userBack->user->showStartScreen(this);
+	testBack->editor->deleteSetOfTests(testSetNumber);
+	testBack->user->showStartScreen(this);
 }
 
 void CourseWorkTestingUI::StartForm::choosedStartSet(int testSetNumber)
 {
 	clearControls();
 	buttonReturn->Visible = true;
-	std::vector<Question*> testSet = *userBack->editor->getSetOfTests(userBack->editor->nameOfTests[testSetNumber]);
+	std::vector<Question*> testSet = *testBack->editor->getSetOfTests(testBack->editor->nameOfTests[testSetNumber]);
 	int number = 0;
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
 	for (auto curTest : testSet) {
@@ -280,7 +511,7 @@ void CourseWorkTestingUI::StartForm::choosedEditSet(int testSetNumber)
 {
 	clearControls();
 	buttonReturn->Visible = true;
-	std::vector<Question*> testSet = *userBack->editor->getSetOfTests(userBack->editor->nameOfTests[testSetNumber]);
+	std::vector<Question*> testSet = *testBack->editor->getSetOfTests(testBack->editor->nameOfTests[testSetNumber]);
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
 	int number = 0;
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
@@ -288,34 +519,45 @@ void CourseWorkTestingUI::StartForm::choosedEditSet(int testSetNumber)
 		curTest->displayQuestion(this, number);
 		number++;
 	}
-	createAddButton();
+	createAddButton(gcnew System::EventHandler(this, &StartForm::buttonAddTest_Click));
 }
 
 void CourseWorkTestingUI::StartForm::choosedDeleteTest(int testNumber)
 {
-	std::string testSetName = userBack->editor->nameOfTests[choosenTestSet];
-	userBack->editor->deleteTest(choosenTestSet, testNumber);
-	if(userBack->editor->getSetOfTests(testSetName))
+	std::string testSetName = testBack->editor->nameOfTests[choosenTestSet];
+	testBack->editor->deleteTest(choosenTestSet, testNumber);
+	if(testBack->editor->getSetOfTests(testSetName))
 		choosedEditSet(choosenTestSet);
 	else
-		userBack->user->showStartScreen(this);
+		testBack->user->showStartScreen(this);
 }
 
-void CourseWorkTestingUI::StartForm::choosedEditTest(int testSetNumber)
+void CourseWorkTestingUI::StartForm::choosedEditTest(int testNumber)
 {
-	throw gcnew System::NotImplementedException();
+	this->Enabled = false;
+	TestEditForm^ testEditorForm = gcnew TestEditForm(testBack->editor->getTest(testBack->editor->nameOfTests[choosenTestSet], testNumber));
+	testEditorForm->ShowDialog();
+	Question* question = testEditorForm->getQA();
+	delete testEditorForm;
+	if (question) {
+		testBack->editor->editTest(testBack->editor->nameOfTests[choosenTestSet], testNumber, question);
+		choosedEditSet(choosenTestSet);
+	}
+	this->Enabled = true;
+	//throw gcnew System::NotImplementedException();
 	//open window test creation
 }
 
 void CourseWorkTestingUI::StartForm::choosedReturn()
 {
-	userBack->user->showStartScreen(this);
+	buttonReturn->Visible = false;
+	testBack->user->showStartScreen(this);
 }
 
 void CourseWorkTestingUI::StartForm::showTestSets(void (*showSetFunc)(StartForm^, String^, int))
 {
 	clearControls();
-	std::vector<std::string> testSetsNames = userBack->editor->nameOfTests;
+	std::vector<std::string> testSetsNames = testBack->editor->nameOfTests;
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSetsNames.size());
 	int counter = 0;
 	for (std::string curTestName : testSetsNames) {
@@ -327,27 +569,75 @@ void CourseWorkTestingUI::StartForm::showTestSets(void (*showSetFunc)(StartForm^
 
 void CourseWorkTestingUI::StartForm::authorization()
 {
-	userBack->logout();
+	testBack->logout();
 	AuthorizeForm^ authorizeForm = gcnew AuthorizeForm;
 	this->Hide();
 	authorizeForm->ShowDialog();
 	String^ userName = authorizeForm->getUserName();
-	this->Show();
-	userBack->login(msclr::interop::marshal_as<std::string>(userName));
+	testBack->login(msclr::interop::marshal_as<std::string>(userName));
 	delete authorizeForm;
-	userBack->user->showStartScreen(this);
-	userToolStripButton->Text = gcnew System::String(userBack->user->getUserName().c_str());
+	testBack->user->showStartScreen(this);
+	if(testBack->user->checkAccess() != NonAuthorized)
+	{
+		this->Show();
+		userToolStripButton->Text = gcnew System::String(testBack->user->getUserName().c_str());
+	}
 }
 
-void CourseWorkTestingUI::StartForm::showSetsToClient()
+void CourseWorkTestingUI::StartForm::AddNewTest()
 {
-	throw gcnew System::NotImplementedException();
+	this->Enabled = false;
+	TestEditForm^ testEditorForm = gcnew TestEditForm();
+	testEditorForm->ShowDialog();
+	Question* question = testEditorForm->getQA();
+	delete testEditorForm;
+	if (question) {
+		testBack->editor->addTest(choosenTestSet, question);
+		choosedEditSet(choosenTestSet);
+	}
+	this->Enabled = true;
 }
 
-void CourseWorkTestingUI::StartForm::showSetsToAdmin()
+void CourseWorkTestingUI::StartForm::choosedAddSet()
 {
-	throw gcnew System::NotImplementedException();
+	this->Enabled = false;
+	TestSetEditForm^ testEditorForm = gcnew TestSetEditForm();
+	testEditorForm->ShowDialog();
+	String^ testSetName = testEditorForm->getTestSetName();
+	delete testEditorForm;
+	if (testSetName) {
+		testBack->editor->addTestSet(msclr::interop::marshal_as<std::string>(testSetName));
+		testBack->user->showStartScreen(this);
+	}
+	this->Enabled = true;
 }
+
+void CourseWorkTestingUI::StartForm::choosedEditSetName(int testSetNumber)
+{
+	this->Enabled = false;
+	std::string setName = testBack->editor->nameOfTests[testSetNumber];
+	String^ testToEdit = msclr::interop::marshal_as<System::String^>(setName);;
+	TestSetEditForm^ testEditorForm = gcnew TestSetEditForm(testToEdit);
+	testEditorForm->ShowDialog();
+	String^ testSetName = testEditorForm->getTestSetName();
+	delete testEditorForm;
+	if (testSetName) {
+		testBack->editor->changeTestSetName(setName, msclr::interop::marshal_as<std::string>(testSetName));
+		//userBack->editor->addTestSet(msclr::interop::marshal_as<std::string>(testSetName));
+		testBack->user->showStartScreen(this);
+	}
+	this->Enabled = true;
+}
+
+//void CourseWorkTestingUI::StartForm::showSetsToClient()
+//{
+//	throw gcnew System::NotImplementedException();
+//}
+//
+//void CourseWorkTestingUI::StartForm::showSetsToAdmin()
+//{
+//	throw gcnew System::NotImplementedException();
+//}
 
 void CourseWorkTestingUI::StartForm::clearControls()
 {
@@ -355,8 +645,7 @@ void CourseWorkTestingUI::StartForm::clearControls()
 	xTab = 12;
 	yStartMargin = 37;
 	groupBoxWidth = this->Size.Width - 30;
-	this->Controls->Clear();
+	controlPanel->Controls->Clear();
 	if(allGroupBoxes)
 		delete[] allGroupBoxes;
-	showToolBar();
 }

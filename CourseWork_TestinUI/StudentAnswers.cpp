@@ -1,5 +1,5 @@
 #include "StudentAnswers.h"
-bool StudentAnswers::addStudentAnswer(std::string studentName, std::string nameOfTest, studentAnswerData* marks)
+bool StudentAnswers::addStudentAnswer(std::string studentName, std::string nameOfTest, StudentAnswerData* marks)
 {
 	try {
 		if (studentAnswers.at(studentName)->count(nameOfTest) != 0)
@@ -8,7 +8,7 @@ bool StudentAnswers::addStudentAnswer(std::string studentName, std::string nameO
 		return true;
 	}
 	catch (const std::exception& e) {
-		std::unordered_map<std::string, studentAnswerData*>* map = new std::unordered_map<std::string, studentAnswerData*>;
+		std::unordered_map<std::string, StudentAnswerData*>* map = new std::unordered_map<std::string, StudentAnswerData*>;
 		map->insert({ nameOfTest, marks });
 		studentAnswers.insert({ studentName, map });
 		studentsNames.push_back(studentName);
@@ -16,7 +16,7 @@ bool StudentAnswers::addStudentAnswer(std::string studentName, std::string nameO
 	}
 }
 
-studentAnswerData* StudentAnswers::getStudentAnswers(std::string studentName, std::string nameOfTest)
+StudentAnswerData* StudentAnswers::getStudentAnswers(std::string studentName, std::string nameOfTest)
 {
 	if (studentAnswers.find(studentName) == studentAnswers.end() || studentAnswers.at(studentName)->find(nameOfTest) == studentAnswers.at(studentName)->end()) {
 		return nullptr;
@@ -27,7 +27,7 @@ studentAnswerData* StudentAnswers::getStudentAnswers(std::string studentName, st
 bool StudentAnswers::isTestPassed(std::string studentName, std::string nameOfTest)
 {
 	try {
-		studentAnswerData* marks = studentAnswers.at(studentName)->at(nameOfTest);
+		StudentAnswerData* marks = studentAnswers.at(studentName)->at(nameOfTest);
 		return true;
 	}
 	catch (const std::exception& e) {

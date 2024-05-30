@@ -11,17 +11,49 @@ bool Editor::deleteTestSetName(std::string nameOfSet)
 	return false;
 }
 
+bool Editor::replaceTestSetName(std::string nameOfSet, std::string changedTestSetName)
+{
+	for (int i = 0; i < nameOfTests.size(); i++) {
+		if (nameOfTests[i] == nameOfSet) {
+			nameOfTests.at(i) = changedTestSetName;
+			return true;
+		}
+	}
+	return false;
+}
+
+void Editor::addTestSet(std::string nameOfSet)
+{
+	std::vector<Question*>* newSetOfQuestion = new std::vector<Question*>;
+	setOfTests.insert({ nameOfSet, newSetOfQuestion });
+	nameOfTests.push_back(nameOfSet);
+}
+
+void Editor::changeTestSetName(std::string testSetName, std::string changedTestSetName)
+{
+	std::vector<Question*>* setOfQuestions = setOfTests.at(testSetName);
+	setOfTests.erase(testSetName);
+	setOfTests.insert({ changedTestSetName, setOfQuestions });
+	replaceTestSetName(testSetName, changedTestSetName);
+}
+
 void Editor::addTest(std::string nameOfSet, Question* question) {
 	try {
 		std::vector<Question*>* setOfQuestions = setOfTests.at(nameOfSet);
 		setOfQuestions->push_back(question);
 	}
 	catch (const std::exception& e) {
-		std::vector<Question*>* newSetOfQuestion = new std::vector<Question*>;
-		newSetOfQuestion->push_back(question);
-		setOfTests.insert({ nameOfSet, newSetOfQuestion });
-		nameOfTests.push_back(nameOfSet);
+		addTestSet(nameOfSet);
+		setOfTests.at(nameOfSet)->push_back(question);
+		//std::vector<Question*>* newSetOfQuestion = new std::vector<Question*>;
+		//newSetOfQuestion->push_back(question);
+		//setOfTests.insert({ nameOfSet, newSetOfQuestion });
+		//nameOfTests.push_back(nameOfSet);
 	}
+}
+
+void Editor::addTest(int testSetNumber, Question* question) {
+	addTest(nameOfTests[testSetNumber], question);
 }
 
 void Editor::deleteTest(std::string nameOfSet, int nOfTest) {
@@ -32,20 +64,13 @@ void Editor::deleteTest(std::string nameOfSet, int nOfTest) {
 		setOfQuestions->erase(setOfQuestions->begin() + nOfTest);
 		if (setOfQuestions->size() != 0)
 			return;
-		for (int i = 0; i < nameOfTests.size(); i++) {
-			if (nameOfTests[i] == nameOfSet) {
-				nameOfTests.erase(nameOfTests.cbegin() + i);
-				delete setOfQuestions;
-				setOfTests.erase(nameOfSet);
-			}
-		}
 	}
 	catch (const std::exception& e) {}
 }
 
-void Editor::deleteTest(int testNumber, int nOfTest)
+void Editor::deleteTest(int testSetNumber, int nOfTest)
 {
-	deleteTest(nameOfTests[testNumber], nOfTest);
+	deleteTest(nameOfTests[testSetNumber], nOfTest);
 }
 
 void Editor::editTest(std::string nameOfSet, int nOfTest, Question* question) {
@@ -82,9 +107,9 @@ std::vector<Question*>* Editor::getSetOfTests(std::string nameOfSet) {
 	}
 }
 
-std::vector<Question*>* Editor::getSetOfTests(int setNumber)
+std::vector<Question*>* Editor::getSetOfTests(int testSetNumber)
 {
-	return getSetOfTests(nameOfTests[setNumber]);
+	return getSetOfTests(nameOfTests[testSetNumber]);
 }
 
 void Editor::deleteSetOfTests(std::string nameOfSet) {

@@ -343,6 +343,12 @@ void clientShow(CourseWorkTestingUI::StartForm^ form, System::String^ testSetNam
 void AdminUser::showStartScreen(CourseWorkTestingUI::StartForm^ form)
 {
         form->showTestSets(&adminShow);
+        form->createAddButton(gcnew System::EventHandler(form, &CourseWorkTestingUI::StartForm::buttonAddTestSet_Click));
+}
+
+void AdminUser::showTestButtons(CourseWorkTestingUI::StartForm^ form, int number)
+{
+    form->createAdminChoiceTestGB(number);
 }
 
 void ClientUser::showStartScreen(CourseWorkTestingUI::StartForm^ form)

@@ -130,6 +130,8 @@
     <ClCompile Include="SingleChoiceQuestion.cpp" />
     <ClCompile Include="StartForm.cpp" />
     <ClCompile Include="StudentAnswers.cpp" />
+    <ClCompile Include="TestEditForm.cpp" />
+    <ClCompile Include="TestSetEditForm.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Answer.h" />
@@ -146,6 +148,12 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="StudentAnswers.h" />
+    <ClInclude Include="TestEditForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="TestSetEditForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AuthorizeForm.resx">
@@ -153,6 +161,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="StartForm.resx">
       <DependentUpon>StartForm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestEditForm.resx">
+      <DependentUpon>TestEditForm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestSetEditForm.resx">
+      <DependentUpon>TestSetEditForm.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

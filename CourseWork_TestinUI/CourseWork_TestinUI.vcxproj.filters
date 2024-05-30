@@ -54,6 +54,12 @@
     <ClCompile Include="AuthorizeForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestEditForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSetEditForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartForm.h">
@@ -84,6 +90,12 @@
       <Filter>Header Files\TestsBack</Filter>
     </ClInclude>
     <ClInclude Include="AuthorizeForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestEditForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSetEditForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

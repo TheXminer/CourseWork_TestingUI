@@ -43,8 +43,34 @@ void MultipleChoiceQuestion::displayQuestion(CourseWorkTestingUI::StartForm^ sta
     {
         answers[i] = gcnew System::String(allAnswers[i].getAnswer().c_str());
     }
-    startForm->createMultipleChoiceTestGB(strQuestion, answers, number);
+    startForm->createMultipleChoiceTestGB(strQuestion, answers, number, mark);
     startForm->markCorrectAnswer(allAnswers.size(), number, correctAnswersIndex);
+}
+
+std::string MultipleChoiceQuestion::getType() const
+{
+    return "Multiple Choice";
+}
+
+int MultipleChoiceQuestion::checkAnswer(const std::string &answer)
+{
+    std::vector<int> answers;
+    std::istringstream iss(answer);
+    std::string token;
+    while (std::getline(iss, token, ',')) {
+        answers.push_back(std::stoi(token) - 1);
+    }
+    return checkAnswer(answers);
+}
+
+std::string MultipleChoiceQuestion::getCorrectAnswers()
+{
+    std::string correctIndexes = "";
+    for (int index : correctAnswersIndex) {
+        correctIndexes += std::to_string(index) + ",";
+    }
+    correctIndexes.pop_back();
+    return correctIndexes;
 }
 
 //void MultipleChoiceQuestion::displayQuestionWhithButtons(CourseWorkTestinUI::StartForm^ startForm, int number)

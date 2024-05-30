@@ -1,7 +1,6 @@
 #pragma once
 #include <vcclr.h>
 #include <vector>
-#include "AuthorizeForm.h"
 namespace CourseWorkTestingUI {
 
 	using namespace System;
@@ -24,39 +23,62 @@ namespace CourseWorkTestingUI {
 		array<GroupBox^, 1>^ allGroupBoxes;
 		int buttonSize = 40, buttonMargin = 20;
 		int choosenTestSet;
+	private: Panel^ controlPanel;
+	private: Panel^ toolBarPanel;
 	private: System::Windows::Forms::ToolStrip^ userToolStrip;
 	private: System::Windows::Forms::ToolStripMenuItem^ buttonExit;
 	private: System::Windows::Forms::ToolStripButton^ buttonReturn;
 	private: System::Windows::Forms::ToolStripSplitButton^ userToolStripButton;
 		   Bitmap^ iconDelete;
+		   Bitmap^ iconDone;
 		   Bitmap^ iconEdit;
 		   Bitmap^ iconStart;
-		   Bitmap^ iconDone;
 		   Bitmap^ iconAdd;
 		   Bitmap^ iconReturn;
 		   Bitmap^ iconExit;
+		   Bitmap^ iconResults;
+		   Bitmap^ iconView;//
+		const Color^ testFailedColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(192)), static_cast<System::Int32>(static_cast<System::Byte>(255)),
+				static_cast<System::Int32>(static_cast<System::Byte>(192)));
+		const Color^ testPassedColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(255)), static_cast<System::Int32>(static_cast<System::Byte>(192)), 
+				static_cast<System::Int32>(static_cast<System::Byte>(192)));
+
+
+
+
+
 		   Bitmap^ iconProfile;
 	public:
 		StartForm(void)
 		{
 			InitializeComponent();
+			toolBarPanel = gcnew Panel();
+			toolBarPanel->Dock = DockStyle::Top;
+			toolBarPanel->Height = 25;
 
+			controlPanel = gcnew Panel();
+			controlPanel->Dock = DockStyle::Fill;
+			controlPanel->AutoScroll = true;
 			//TODO: Add the constructor code here
 			//
 			curY = 32;
 			xTab = 12;
 			yStartMargin = 37;
 			groupBoxWidth = this->Size.Width - 30;
-			allGroupBoxes = gcnew array<GroupBox^, 1>(15);
-
 			iconDelete = gcnew Bitmap("./ButtonIcons/iconDelete.png");
+			iconDone = gcnew Bitmap("./ButtonIcons/iconDone.png");
 			iconEdit = gcnew Bitmap("./ButtonIcons/iconEdit.png");
 			iconStart = gcnew Bitmap("./ButtonIcons/iconStart.png");
 			iconAdd = gcnew Bitmap("./ButtonIcons/iconAdd.png");
-			iconDone = gcnew Bitmap("./ButtonIcons/iconDone.png");
 			iconReturn = gcnew Bitmap("./ButtonIcons/iconBack.png");
 			iconExit = gcnew Bitmap("./ButtonIcons/iconExit.png");
 			iconProfile = gcnew Bitmap("./ButtonIcons/iconProfile.png");
+			iconResults = gcnew Bitmap("./ButtonIcons/iconResults.png");
+			iconView = gcnew Bitmap("./ButtonIcons/iconView.png");
+
+			showToolBar();
+
+			allGroupBoxes = gcnew array<GroupBox^, 1>(15);
 			addTest();
 			//showTestSets(&adminShow);
 			//showTestSets();
@@ -107,7 +129,7 @@ namespace CourseWorkTestingUI {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(96, 96);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Dpi;
-			this->AutoScroll = true;
+			this->AutoScrollMargin = System::Drawing::Size(0, 100);
 			this->BackColor = System::Drawing::Color::White;
 			this->ClientSize = System::Drawing::Size(1203, 631);
 			this->Name = L"StartForm";
@@ -122,221 +144,24 @@ namespace CourseWorkTestingUI {
 
 	public:
 		//single/multiple chise questions (for user)
-		void createSingleChoiceTestGB(String^ question, array<String^>^ answers, int number);
+		void createSingleChoiceTestGB(String^ question, array<String^>^ answers, int number, int mark);
 		void markCorrectAnswer(int answersNumber, int number, int correctAnswerIndex);
-		void createMultipleChoiceTestGB(String^ question, array<String^>^ answers, int number);
+		void createMultipleChoiceTestGB(String^ question, array<String^>^ answers, int number, int mark);
 		void markCorrectAnswer(int answersNumber, int number, std::vector<int> correctAnswerIndex);
 		//open answer question (for user)
 		void createOpenTestGB(String^ question, int number);
 		//single/multiple chise questions (D/E actions)
 		void createAdminChoiceTestGB(int number);
 		//show test set name for admin (D/E actions)
-		void adminShowTestSetName(String^ testName, int number) {
-			allGroupBoxes[number] = gcnew GroupBox();
-			Label^ labelTestName;
-			Button^ editButton;
-			Button^ deleteButton; 
-
-			labelTestName = gcnew Label();
-			deleteButton = gcnew Button();
-			editButton = gcnew Button(); 
-			//
-			// GroupBoxQ
-			//
-			allGroupBoxes[number]->Controls->Add(labelTestName);
-			allGroupBoxes[number]->Controls->Add(deleteButton);
-			allGroupBoxes[number]->Controls->Add(editButton);
-			allGroupBoxes[number]->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(204)));
-			allGroupBoxes[number]->Location = Drawing::Point(12, curY);
-			allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, 131);
-			allGroupBoxes[number]->Text = Convert::ToString(number + 1);
-			//
-			// Label
-			//
-			labelTestName->AutoSize = true;
-			labelTestName->Location = Drawing::Point(6, yStartMargin);
-			labelTestName->MaximumSize = System::Drawing::Size(groupBoxWidth - 2 * (buttonMargin + buttonSize) - buttonMargin, 0);
-			labelTestName->Name = L"labelQuestion";
-			labelTestName->Size = Drawing::Size(116, 25);
-			labelTestName->Text = testName;
-			//
-			// DeleteButton
-			//
-			deleteButton->BackgroundImage = iconDelete;
-			deleteButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-			deleteButton->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
-			deleteButton->ForeColor = System::Drawing::Color::Transparent;
-			deleteButton->Location = System::Drawing::Point(groupBoxWidth - buttonMargin - buttonSize, 33);
-			deleteButton->Name = L"D" + Convert::ToString(number);
-			deleteButton->Size = System::Drawing::Size(buttonSize, buttonSize);
-			deleteButton->Click += gcnew System::EventHandler(this, &StartForm::buttonDeleteTestSet_Click);
-			//
-			// EditButton
-			//
-			editButton->BackgroundImage = iconEdit;
-			editButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-			editButton->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
-			editButton->ForeColor = System::Drawing::Color::Transparent;
-			editButton->Location = System::Drawing::Point(groupBoxWidth - 2 * (buttonMargin + buttonSize), 33);
-			editButton->Name = L"E" + Convert::ToString(number);
-			editButton->Size = System::Drawing::Size(buttonSize, buttonSize);
-			editButton->Click += gcnew System::EventHandler(this, &StartForm::buttonEditTestSet_Click);
-			//
-			// Show
-			//
-			allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, yStartMargin + 20 + labelTestName->Size.Height + 20);
-			this->Controls->Add(allGroupBoxes[number]);
-			allGroupBoxes[number]->ResumeLayout(false);
-			allGroupBoxes[number]->PerformLayout();
-
-			curY += allGroupBoxes[number]->Size.Height;
-		}
+		void adminShowTestSetName(String^ testName, int number);
 		//show test set name for user (S action)
-		void clientShowTestSetName(String^ testName, int number) {
-			allGroupBoxes[number] = gcnew GroupBox();
-			Label^ labelTestName;
-			Button^ startButton;
-
-			labelTestName = gcnew Label();
-			startButton = gcnew Button();
-
-			allGroupBoxes[number]->Controls->Add(labelTestName);
-			allGroupBoxes[number]->Controls->Add(startButton);
-			allGroupBoxes[number]->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(204)));
-			allGroupBoxes[number]->Location = Drawing::Point(12, curY);
-			allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, 131);
-			allGroupBoxes[number]->Text = Convert::ToString(number + 1);
-			//
-			// Label
-			//
-			labelTestName->AutoSize = true;
-			labelTestName->Location = Drawing::Point(6, yStartMargin);
-			labelTestName->MaximumSize = System::Drawing::Size(groupBoxWidth - (buttonMargin + buttonSize) - buttonMargin, 0);
-			labelTestName->Name = L"labelQuestion";
-			labelTestName->Size = Drawing::Size(116, 25);
-			labelTestName->Text = testName;
-			//
-			// DeleteButton
-			//
-			if(/*isTestPassed*/false)
-			{
-				startButton->BackgroundImage = iconDone;
-				startButton->Click += gcnew System::EventHandler(this, &StartForm::buttonViewMyMarks_Click);
-			}
-			else
-			{
-				startButton->BackgroundImage = iconStart;
-				startButton->Click += gcnew System::EventHandler(this, &StartForm::buttonStartTestSet_Click);
-			}
-			startButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-			startButton->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
-			startButton->ForeColor = System::Drawing::Color::Transparent;
-			startButton->Location = System::Drawing::Point(groupBoxWidth - buttonMargin - buttonSize, 33);
-			startButton->Name = L"S" + Convert::ToString(number);
-			startButton->Size = System::Drawing::Size(buttonSize, buttonSize);
-			//
-			// Show
-			//
-			allGroupBoxes[number]->Size = Drawing::Size(groupBoxWidth, yStartMargin + 20 + labelTestName->Size.Height + 20);
-			this->Controls->Add(allGroupBoxes[number]);
-			allGroupBoxes[number]->ResumeLayout(false);
-			allGroupBoxes[number]->PerformLayout();
-
-			curY += allGroupBoxes[number]->Size.Height;
-		}
+		void clientShowTestSetName(String^ testName, int number);
 		//show button to finish test
-		void createFinishButton() {
-			Button^ finishButton = gcnew Button();
-
-			finishButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(204)));
-			finishButton->Location = System::Drawing::Point(12, curY);
-			finishButton->Name = L"F";
-			finishButton->Size = System::Drawing::Size(buttonSize * 4, buttonSize);
-			finishButton->TabIndex = 0;
-			finishButton->Text = L"Finish";
-			finishButton->UseVisualStyleBackColor = true;
-
-			this->Controls->Add(finishButton);
-			curY += finishButton->Size.Height;
-			finishButton->PerformLayout();
-		}
+		void createFinishButton();
 		//show button to start test
-		void createAddButton() {
-			Button^ addButton = gcnew Button();
-			addButton->BackgroundImage = iconAdd;
-			addButton->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-			addButton->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
-			addButton->ForeColor = System::Drawing::Color::Transparent;
-			addButton->Location = System::Drawing::Point(12, curY);
-			addButton->Name = L"A";
-			addButton->Size = System::Drawing::Size(buttonSize, buttonSize);
-			addButton->Click += gcnew System::EventHandler(this, &StartForm::buttonAddTest_Click);
-			addButton->UseVisualStyleBackColor = true;
-			curY += addButton->Size.Height;
-
-			this->Controls->Add(addButton);
-			addButton->PerformLayout();
-		}
+		void createAddButton(System::EventHandler^ addEvent);
 		
-		void showToolBar() {
-			userToolStrip = gcnew ToolStrip();
-			buttonExit = gcnew ToolStripMenuItem();
-			buttonReturn = gcnew ToolStripButton();
-			userToolStripButton = gcnew ToolStripSplitButton();
-			userToolStrip->SuspendLayout();
-			// 
-			// userToolStrip
-			// 
-			userToolStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
-				this->buttonReturn,
-					this->userToolStripButton
-			});
-			userToolStrip->Location = System::Drawing::Point(0, 0);
-			userToolStrip->Name = L"userToolStrip";
-			userToolStrip->Size = System::Drawing::Size(1203, 25);
-			userToolStrip->TabIndex = 0;
-			userToolStrip->Text = L"userToolStrip";
-			// 
-			// buttonReturn
-			// 
-			buttonReturn->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
-			buttonReturn->ImageTransparentColor = System::Drawing::Color::Magenta;
-			buttonReturn->Name = L"buttonReturn";
-			buttonReturn->Size = System::Drawing::Size(23, 22);
-			buttonReturn->Text = L"buttonReturn";
-			buttonReturn->Click += gcnew System::EventHandler(this, &StartForm::buttonReturn_Click);
-			buttonReturn->Visible = false;
-			// 
-			// userToolStripButton
-			// 
-			userToolStripButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
-			userToolStripButton->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { buttonExit });
-			userToolStripButton->ImageTransparentColor = System::Drawing::Color::Magenta;
-			userToolStripButton->Name = L"userToolStripButton";
-			userToolStripButton->Size = System::Drawing::Size(78, 22);
-			userToolStripButton->Text = L"UserName";
-			// 
-			// buttonExit
-			// 
-			buttonExit->ImageTransparentColor = System::Drawing::Color::Transparent;
-			buttonExit->Name = L"buttonExit";
-			buttonExit->Size = System::Drawing::Size(180, 22);
-			buttonExit->Text = L"Exit";
-			buttonExit->Click += gcnew System::EventHandler(this, &StartForm::buttonExit_Click);
-			//
-			//Icons
-			//
-			buttonReturn->Image = iconReturn;
-			buttonExit->Image = iconExit;
-			userToolStripButton->Image = iconProfile;
-			//show
-			this->Controls->Add(userToolStrip);
-			userToolStrip->ResumeLayout(false);
-			userToolStrip->PerformLayout();
-		}
+		void showToolBar();
 
 		GroupBox^ getGroupBox(int number) {
 			return allGroupBoxes[number];
@@ -346,18 +171,53 @@ namespace CourseWorkTestingUI {
 		void choosedDeleteSet(int testSetNumber);
 		void choosedStartSet(int testSetNumber);
 		void choosedEditSet(int testSetNumber);
-		void choosedDeleteTest(int testSetNumber);
-		void choosedEditTest(int testSetNumber);
+		void choosedDeleteTest(int testNumber);
+		void choosedEditTest(int testNumber);
 		void choosedReturn();
 		void showTestSets(void (*showSetFunc)(StartForm^, String^, int));
 		void authorization();
-		//void AddNewTest();
-		//void TestCreationWindow();
-		void showSetsToClient();
-		void showSetsToAdmin();
+		void AddNewTest();
+		void choosedAddSet();
+		void choosedEditSetName(int testSetNumber);
 		void clearControls();
+	private:
+		void showTopTestInfo(String^ question, int& curControlY, int number, int mark) {
+		//
+		// QuestionLable
+		//
+		Label^ labelQuestion = gcnew Label();
+		allGroupBoxes[number]->Controls->Add(labelQuestion);
+		labelQuestion->AutoSize = true;
+		labelQuestion->Location = Drawing::Point(6, yStartMargin);
+		labelQuestion->MaximumSize = System::Drawing::Size(groupBoxWidth - 12, 0);
+		labelQuestion->Name = L"labelQuestion";
+		labelQuestion->Size = Drawing::Size(116, 25);
+		labelQuestion->Text = question;
+		curControlY += labelQuestion->Size.Height + 10;
+		//
+		// MarkLable
+		//
+		Label^ labelMark = gcnew Label();
+		allGroupBoxes[number]->Controls->Add(labelMark);
+		labelMark->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point,
+			static_cast<System::Byte>(204)));
+		labelMark->AutoSize = true;
+		labelMark->Location = Drawing::Point(6, curControlY);
+		labelMark->MaximumSize = System::Drawing::Size(groupBoxWidth - 12, 0);
+		labelMark->Name = L"labelMark";
+		labelMark->Size = Drawing::Size(116, 25);
+		labelMark->Text = "Mark: " + mark;
+		curControlY += labelMark->Size.Height + 20;
+	}
+		//void TestCreationWindow();
+		//void showSetsToClient();
+		//void showSetsToAdmin();
 
 #pragma endregion
+	public:
+		System::Void buttonAddTestSet_Click(System::Object^ sender, System::EventArgs^ e) {
+			choosedAddSet();
+		}
 	//private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
 	//	//this->Controls->Clear();
 	//	Button^ clickedButton = dynamic_cast<Button^>(sender);
@@ -410,6 +270,20 @@ namespace CourseWorkTestingUI {
 			choosedEditSet(choosenTestSet);
 		}
 	private:
+		System::Void buttonEditTestSetName_Click(System::Object^ sender, System::EventArgs^ e) {
+			Button^ clickedButton = dynamic_cast<Button^>(sender);
+			String^ name = clickedButton->Name->Remove(0, 1);
+			choosenTestSet = Convert::ToInt32(name);
+			choosedEditSetName(choosenTestSet);
+		}
+	private:
+		System::Void buttonViewResults_Click(System::Object^ sender, System::EventArgs^ e) {
+			Button^ clickedButton = dynamic_cast<Button^>(sender);
+			String^ name = clickedButton->Name->Remove(0, 1);
+			choosenTestSet = Convert::ToInt32(name);
+			//choosedEditSetNa(choosenTestSet);
+		}
+	private:
 		System::Void buttonDeleteTest_Click(System::Object^ sender, System::EventArgs^ e) {
 			Button^ clickedButton = dynamic_cast<Button^>(sender);
 			//TextBox^ text = allGroupBoxes[14]->Controls->Find("sdsd");
@@ -420,7 +294,7 @@ namespace CourseWorkTestingUI {
 		System::Void buttonEditTest_Click(System::Object^ sender, System::EventArgs^ e) {
 			Button^ clickedButton = dynamic_cast<Button^>(sender);
 			String^ name = clickedButton->Name->Remove(0, 1);
-			//choosedEditSet(Convert::ToInt32(name));
+			choosedEditTest(Convert::ToInt32(name));
 		}
 	private:
 		System::Void buttonStartTestSet_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -438,7 +312,7 @@ namespace CourseWorkTestingUI {
 		System::Void buttonAddTest_Click(System::Object^ sender, System::EventArgs^ e) {
 			//Button^ clickedButton = dynamic_cast<Button^>(sender);
 			//String^ name = clickedButton->Name->Remove(0, 1);
-			//choosedStartSet(Convert::ToInt32(name));
+			AddNewTest();
 		}
 	private:
 		System::Void buttonFinishTestSet_Click(System::Object^ sender, System::EventArgs^ e) {

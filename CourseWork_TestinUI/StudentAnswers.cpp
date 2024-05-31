@@ -98,14 +98,14 @@ std::vector<std::vector<std::string>*>* StudentAnswers::getAllTestAnswers(std::s
 		std::vector<std::string>* curStudentResult = new std::vector<std::string>;
 		curStudentResult->push_back(answer.first);
 		auto savedMarks = getStudentAnswers(answer.first, nameOfTest);
-		curStudentResult->push_back("Time " + std::to_string(savedMarks->usedTime));
 		int resultMark = 0;
 		curStudentResult->push_back(std::to_string(resultMark));
+		curStudentResult->push_back("Time " + std::to_string(savedMarks->usedTime));
 		for (auto mark : *savedMarks->marks) {
 			resultMark += mark;
 			curStudentResult->push_back(std::to_string(mark));
 		}
-		curStudentResult->at(2) = std::to_string(resultMark);
+		curStudentResult->at(1) = std::to_string(resultMark);
 		allAnswers->push_back(curStudentResult);
 	}
 	return allAnswers;

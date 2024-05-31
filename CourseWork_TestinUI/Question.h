@@ -19,6 +19,8 @@ public:
     virtual std::string getType() const = 0;
     virtual int checkAnswer(const std::string& answer) = 0;
     virtual std::string getCorrectAnswers() = 0;
+    virtual bool isCheckedButton(System::Windows::Forms::Control^ control) = 0;
+    virtual void checkButton(System::Windows::Forms::Control^ control) = 0;
     //virtual void markCorrectAnswer(CourseWorkTestinUI::StartForm^ startForm, int number) {};
     //virtual void displayQuestionWhithButtons(CourseWorkTestinUI::StartForm^ startForm, int number) {};
 };

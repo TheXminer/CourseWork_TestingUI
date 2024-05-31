@@ -22,38 +22,235 @@ int main(array<String^>^) {
 
 void CourseWorkTestingUI::StartForm::addTest()
 {
-	std::string question = "sdsd";
-	Answer answ1("1?");
-	Answer answ2("2?");
-	Answer answ3("3?");
-	Answer answ4("4?");
-	std::vector<Answer > answers = { Answer("1?"),Answer("2?"),Answer("3?"),Answer("4?") };
-	std::vector<int> correctIdexes = { 2, 3 };
-	Question* extraQuestion1 = new MultipleChoiceQuestion(question, answers, 4, correctIdexes);
-	Question* extraQuestion2 = new MultipleChoiceQuestion(question, answers, 4, {1, 2});
-	Question* extraQuestion3 = new MultipleChoiceQuestion(question, answers, 4, correctIdexes);
-	Question* extraQuestion4 = new MultipleChoiceQuestion(question, answers, 4, correctIdexes);
-	//extraQuestion->displayQuestion(this, 0);
-	//extraQuestion->displayQuestion(this, 1);
-	Question* extraQuestion11 = new SingleChoiceQuestion(question, answers, 4, 3);
-	Question* extraQuestion12 = new SingleChoiceQuestion(question, answers, 4, 2);
-	Question* extraQuestion13 = new SingleChoiceQuestion(question, answers, 4, 0);
-	Question* extraQuestion14 = new SingleChoiceQuestion(question, answers, 4, 1);
-	testBack->editor->addTest("faf", extraQuestion1);
-	testBack->editor->addTest("faf", extraQuestion2);
-	testBack->editor->addTest("faf", extraQuestion11);
-	testBack->editor->addTest("faf", extraQuestion12);
-	testBack->editor->addTest("faf", extraQuestion13);
-	testBack->editor->addTest("faf", extraQuestion3);
-	testBack->editor->addTest("faf", extraQuestion14);
-	testBack->editor->addTest("faf", extraQuestion4);
+	std::string testSetName = "Start Test 1";
+	Question* question = new SingleChoiceQuestion("What is the capital city of France?", 
+		{ Answer("Berlin"),Answer("Madrid"),Answer("Paris"),Answer("Rome") }, 2, 2);
+	testBack->editor->addTest(testSetName, question);
+	question = new MultipleChoiceQuestion("Which of the following are programming languages?", 
+		{ Answer("Python"),Answer("HTML"),Answer("JavaScript"),Answer("CSS") }, 4, { 0, 2 });
+	testBack->editor->addTest(testSetName, question);
+	//
+	question = new SingleChoiceQuestion("Who wrote the play 'Romeo and Juliet'?",
+		{ Answer("Charles Dickens"),Answer("William Shakespeare"),
+		Answer("Jane Austen"),Answer("Mark Twain") }, 4, 1);
+	testBack->editor->addTest(testSetName, question);
+	question = new MultipleChoiceQuestion("Which of the following countries are located in South America?",
+		{ Answer("Brazil"),Answer("Mexico"),Answer("Argentina"),Answer("Canada") }, 4, { 0, 2 });
+	testBack->editor->addTest(testSetName, question);
+	//
+	question = new SingleChoiceQuestion("What is the largest planet in our solar system?",
+		{ Answer("Earth"),Answer("Mars"),
+		Answer("Jupiter"),Answer("Saturn") }, 3, 2);
+	testBack->editor->addTest(testSetName, question);
+	question = new MultipleChoiceQuestion("Which of the following elements are noble gases?",
+		{ Answer("Oxygen"),Answer("Helium"),Answer("Hydrogen"),Answer("Neon") }, 8, { 1, 3 });
+	testBack->editor->addTest(testSetName, question);
+
+	//
+	testSetName = "Start Test 2";
+	question = new SingleChoiceQuestion("What is the chemical symbol for gold?",
+		{ Answer("Au"),Answer("Ag"),
+		Answer("Pb"),Answer("Fe") }, 2, 0);
+	testBack->editor->addTest(testSetName, question);
+	question = new MultipleChoiceQuestion("Which of the following are components of a computer?",
+		{ Answer("CPU"),Answer("RAM"),Answer("HDD"),Answer("HTTP") }, 5, { 0, 1, 2 });
+	testBack->editor->addTest(testSetName, question);
+	//
+	question = new SingleChoiceQuestion("In what year did the Titanic sink?",
+		{ Answer("1905"),Answer("1912"),
+		Answer("1918"),Answer("1923") }, 3, 1);
+	testBack->editor->addTest(testSetName, question);
+	question = new MultipleChoiceQuestion("Which of the following are mammals?",
+		{ Answer("Whale"),Answer("Shark"),Answer("Dolphin"),Answer("Crocodile") }, 4, { 0, 2 });
+	testBack->editor->addTest(testSetName, question);
+
+	//std::string question = "sdsd";
+	//Answer answ1("1?");
+	//Answer answ2("2?");
+	//Answer answ3("3?");
+	//Answer answ4("4?");
+	//std::vector<Answer > answers = { Answer("1?"),Answer("2?"),Answer("3?"),Answer("4?") };
+	//std::vector<int> correctIdexes = { 2, 3 };
+	//Question* extraQuestion1 = new MultipleChoiceQuestion(question, answers, 4, correctIdexes);
+	//Question* extraQuestion2 = new MultipleChoiceQuestion(question, answers, 4, {1, 2});
+	//Question* extraQuestion3 = new MultipleChoiceQuestion(question, answers, 4, correctIdexes);
+	//Question* extraQuestion4 = new MultipleChoiceQuestion(question, answers, 4, correctIdexes);
+	////extraQuestion->displayQuestion(this, 0);
+	////extraQuestion->displayQuestion(this, 1);
+	//Question* extraQuestion11 = new SingleChoiceQuestion(question, answers, 4, 3);
+	//Question* extraQuestion12 = new SingleChoiceQuestion(question, answers, 4, 2);
+	//Question* extraQuestion13 = new SingleChoiceQuestion(question, answers, 4, 0);
+	//Question* extraQuestion14 = new SingleChoiceQuestion(question, answers, 4, 1);
+	//testBack->editor->addTest("faf", extraQuestion1);
+	//testBack->editor->addTest("faf", extraQuestion2);
+	//testBack->editor->addTest("faf", extraQuestion11);
+	//testBack->editor->addTest("faf", extraQuestion12);
+	//testBack->editor->addTest("faf", extraQuestion13);
+	//testBack->editor->addTest("faf", extraQuestion3);
+	//testBack->editor->addTest("faf", extraQuestion14);
+	//testBack->editor->addTest("faf", extraQuestion4);
 	testBack->user->showStartScreen(this);
 	//clientBack->setAccess(AuthorizedAsStudent);
 	//extraQuestion->displayQuestion(this, 2);
 	//extraQuestion->displayQuestion(this, 3);
 }
 
+void CourseWorkTestingUI::StartForm::showTopTestInfo(String^ question, int& curControlY, int number, int mark) {
+	//
+	// QuestionLable
+	//
+	Label^ labelQuestion = gcnew Label();
+	allGroupBoxes[number]->Controls->Add(labelQuestion);
+	labelQuestion->AutoSize = true;
+	labelQuestion->Location = Drawing::Point(6, yStartMargin);
+	labelQuestion->MaximumSize = System::Drawing::Size(groupBoxWidth - 12, 0);
+	labelQuestion->Name = L"labelQuestion";
+	labelQuestion->Size = Drawing::Size(116, 25);
+	labelQuestion->Text = question;
+	curControlY += labelQuestion->Size.Height + 10;
+	//
+	// MarkLable
+	//
+	Label^ labelMark = gcnew Label();
+	allGroupBoxes[number]->Controls->Add(labelMark);
+	labelMark->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point,
+		static_cast<System::Byte>(204)));
+	labelMark->AutoSize = true;
+	labelMark->Location = Drawing::Point(6, curControlY);
+	labelMark->MaximumSize = System::Drawing::Size(groupBoxWidth - 12, 0);
+	labelMark->Name = L"labelMark";
+	labelMark->Size = Drawing::Size(116, 25);
+	labelMark->Text = "Mark: " + mark;
+	curControlY += labelMark->Size.Height + 20;
+}
 
+void CourseWorkTestingUI::StartForm::showTestResults()
+{
+	clearControls();
+	buttonReturn->Visible = true;
+	auto allTestAnswers = testBack->studentAnswers->getAllTestAnswers(testBack->editor->nameOfTests[choosenTestSet]);
+	if (allTestAnswers->size() == 0)
+		return;
+	DataGridView^ dataGridView;
+	DataGridViewTextBoxColumn^ StudentNameColumn;
+	DataGridViewTextBoxColumn^ MarkColumn;
+	DataGridViewTextBoxColumn^ UsedTimeColumn;
+	//
+	dataGridView = (gcnew System::Windows::Forms::DataGridView());
+	StudentNameColumn = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+	MarkColumn = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+	UsedTimeColumn = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+	// 
+	// dataGridView
+	// 
+	dataGridView->AutoSizeColumnsMode = System::Windows::Forms::DataGridViewAutoSizeColumnsMode::ColumnHeader;
+	dataGridView->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
+	dataGridView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(3) {
+		StudentNameColumn,
+			MarkColumn, UsedTimeColumn
+	});
+	dataGridView->Location = System::Drawing::Point(12, 48);
+	dataGridView->Name = L"dataGridView";
+	dataGridView->Size = System::Drawing::Size(1179, 571);
+	dataGridView->TabIndex = 0; 
+	dataGridView->Visible = true;
+	// 
+	// StudentNameColumn
+	// 
+	StudentNameColumn->Frozen = true;
+	StudentNameColumn->HeaderText = L"Student Name";
+	StudentNameColumn->Name = L"StudentNameColumn";
+	StudentNameColumn->ReadOnly = true;
+	StudentNameColumn->Resizable = System::Windows::Forms::DataGridViewTriState::False;
+	StudentNameColumn->Width = 300;
+	// 
+	// MarkColumn
+	// 
+	MarkColumn->Frozen = true;
+	MarkColumn->HeaderText = L"Total mark";
+	MarkColumn->Name = L"MarkColumn";
+	MarkColumn->ReadOnly = true;
+	// 
+	// UsedTimeColumn
+	// 
+	UsedTimeColumn->Frozen = true;
+	UsedTimeColumn->HeaderText = L"Used Time";
+	UsedTimeColumn->Name = L"UsedTimeColumn";
+	UsedTimeColumn->ReadOnly = true;
+	UsedTimeColumn->Width = 150;
+	
+
+	// 
+	// No1
+	// 	
+	int counter = allTestAnswers->at(0)->size() - 3;
+	for (int i = 0; i < counter; i++) {
+		DataGridViewTextBoxColumn^ MarkColumn;
+		MarkColumn = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+		dataGridView->Columns->Add(MarkColumn);
+		MarkColumn->Frozen = true;
+		MarkColumn->ReadOnly = true;
+		MarkColumn->HeaderText = L"No" + counter;
+		MarkColumn->Name = L"N" + counter;
+	}
+	for (auto lineText : *allTestAnswers) {
+		array<String^, 1>^ lineItems = gcnew array<String^, 1>(counter + 3);
+		//lineItems[0] = msclr::interop::marshal_as<System::String^>(lineText->at(0));
+		//lineItems[1] = msclr::interop::marshal_as<System::String^>(lineText->at(1));
+		//lineItems[2] = msclr::interop::marshal_as<System::String^>(lineText->at(2));
+		counter = 0;
+		for (auto curLineItem : *lineText) {
+			lineItems[counter] = msclr::interop::marshal_as<System::String^>(curLineItem);
+			counter++;
+		}
+		dataGridView->Rows->Add(lineItems);
+	}
+	
+	
+	
+
+
+	controlPanel->Controls->Add(dataGridView);
+	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(dataGridView))->EndInit();
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	//dataGridView->Rows->Add("Item 1, Col 1", "Item 1, Col 2", "Item 1, Col 3");
+	//dataGridView->Rows->Add("Item 2, Col 1", "Item 2, Col 2", "Item 2, Col 3");
+	//dataGridView->Rows->Add("Item 3, Col 1", "Item 3, Col 2", "Item 3, Col 3");
+	dataGridView->ResumeLayout(false);
+	dataGridView->PerformLayout();
+}
 
 void CourseWorkTestingUI::StartForm::createSingleChoiceTestGB(String^ question, array<String^>^ answers, int number, int mark)
 {
@@ -77,7 +274,7 @@ void CourseWorkTestingUI::StartForm::createSingleChoiceTestGB(String^ question, 
 
 		currControls[i]->AutoSize = true;
 		currControls[i]->Location = System::Drawing::Point(45, curControlY);
-		currControls[i]->Name = L"answerOption" + i;
+		currControls[i]->Name = L"B" + i;
 		currControls[i]->MaximumSize = System::Drawing::Size(groupBoxWidth - 51, 0);
 		currControls[i]->Size = System::Drawing::Size(112, controlHeight);
 		currControls[i]->Text = answers[i];
@@ -117,7 +314,7 @@ void CourseWorkTestingUI::StartForm::createMultipleChoiceTestGB(String^ question
 
 		currControls[i]->AutoSize = true;
 		currControls[i]->Location = System::Drawing::Point(45, curControlY);
-		currControls[i]->Name = L"answerOption" + i;
+		currControls[i]->Name = L"B" + i;
 		currControls[i]->MaximumSize = System::Drawing::Size(groupBoxWidth - 51, 0);
 		currControls[i]->Size = System::Drawing::Size(112, controlHeight);
 		currControls[i]->Text = answers[i];
@@ -266,10 +463,10 @@ void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int nu
 	if (testBack->user->checkAccess() != AuthorizedAsAdmin)
 		return;
 	GroupBox^ groupBox = allGroupBoxes[number];
-	dynamic_cast<RadioButton^>(groupBox->Controls->Find(L"answerOption" + correctAnswerIndex, false)[0])->Checked = true;
+	dynamic_cast<RadioButton^>(groupBox->Controls->Find(L"B" + correctAnswerIndex, false)[0])->Checked = true;
 	
 	for(int i = 0; i < answersNumber; i++) {
-		RadioButton^ radioButton = dynamic_cast<RadioButton^>(groupBox->Controls->Find(L"answerOption" + i, false)[0]);
+		RadioButton^ radioButton = dynamic_cast<RadioButton^>(groupBox->Controls->Find(L"B" + i, false)[0]);
 		radioButton->Enabled = false;
 	}
 }
@@ -280,12 +477,12 @@ void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int nu
 		return;
 	GroupBox^ groupBox = allGroupBoxes[number];
 	for (int answerIndex : correctAnswerIndex) {
-		CheckBox^ checkBox = dynamic_cast<CheckBox^>(groupBox->Controls->Find(L"answerOption" + answerIndex, false)[0]);
+		CheckBox^ checkBox = dynamic_cast<CheckBox^>(groupBox->Controls->Find(L"B" + answerIndex, false)[0]);
 		checkBox->Checked = true;
 	}
 	for(int i = 0; i < answersNumber; i++)
 	{
-		CheckBox^ checkBox = dynamic_cast<CheckBox^>(groupBox->Controls->Find(L"answerOption" + i, false)[0]);
+		CheckBox^ checkBox = dynamic_cast<CheckBox^>(groupBox->Controls->Find(L"B" + i, false)[0]);
 		checkBox->Enabled = false;
 	}
 }
@@ -402,6 +599,7 @@ void CourseWorkTestingUI::StartForm::createFinishButton()
 	finishButton->TabIndex = 0;
 	finishButton->Text = L"Finish";
 	finishButton->UseVisualStyleBackColor = true;
+	finishButton->Click += gcnew System::EventHandler(this, &StartForm::buttonFinishTestSet_Click);
 
 	controlPanel->Controls->Add(finishButton);
 	curY += finishButton->Size.Height;
@@ -496,12 +694,14 @@ void CourseWorkTestingUI::StartForm::choosedDeleteSet(int testSetNumber)
 void CourseWorkTestingUI::StartForm::choosedStartSet(int testSetNumber)
 {
 	clearControls();
-	buttonReturn->Visible = true;
+	//buttonReturn->Visible = true;
 	std::vector<Question*> testSet = *testBack->editor->getSetOfTests(testBack->editor->nameOfTests[testSetNumber]);
 	int number = 0;
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
+	//getResultsFunc = new std::vector<std::function<std::string()>>();
 	for (auto curTest : testSet) {
 		curTest->displayQuestion(this, number);
+		//getResultsFunc->push_back(curTest.)
 		number++;
 	}
 	createFinishButton();
@@ -514,7 +714,6 @@ void CourseWorkTestingUI::StartForm::choosedEditSet(int testSetNumber)
 	std::vector<Question*> testSet = *testBack->editor->getSetOfTests(testBack->editor->nameOfTests[testSetNumber]);
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
 	int number = 0;
-	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
 	for (auto curTest : testSet) {
 		curTest->displayQuestion(this, number);
 		number++;
@@ -526,6 +725,7 @@ void CourseWorkTestingUI::StartForm::choosedDeleteTest(int testNumber)
 {
 	std::string testSetName = testBack->editor->nameOfTests[choosenTestSet];
 	testBack->editor->deleteTest(choosenTestSet, testNumber);
+	testBack->studentAnswers->deleteStudentsAnswer(testSetName, testNumber);
 	if(testBack->editor->getSetOfTests(testSetName))
 		choosedEditSet(choosenTestSet);
 	else
@@ -550,6 +750,8 @@ void CourseWorkTestingUI::StartForm::choosedEditTest(int testNumber)
 
 void CourseWorkTestingUI::StartForm::choosedReturn()
 {
+	//if (dataGridView->Visible)
+	//	dataGridView->Visible = false;
 	buttonReturn->Visible = false;
 	testBack->user->showStartScreen(this);
 }
@@ -592,7 +794,8 @@ void CourseWorkTestingUI::StartForm::AddNewTest()
 	Question* question = testEditorForm->getQA();
 	delete testEditorForm;
 	if (question) {
-		testBack->editor->addTest(choosenTestSet, question);
+		testBack->editor->addTest(choosenTestSet, question); 
+		testBack->studentAnswers->addNewTestMark(testBack->editor->nameOfTests[choosenTestSet]);
 		choosedEditSet(choosenTestSet);
 	}
 	this->Enabled = true;
@@ -623,12 +826,83 @@ void CourseWorkTestingUI::StartForm::choosedEditSetName(int testSetNumber)
 	delete testEditorForm;
 	if (testSetName) {
 		testBack->editor->changeTestSetName(setName, msclr::interop::marshal_as<std::string>(testSetName));
+		testBack->studentAnswers->changeTestSetName(setName, msclr::interop::marshal_as<std::string>(testSetName));
 		//userBack->editor->addTestSet(msclr::interop::marshal_as<std::string>(testSetName));
 		testBack->user->showStartScreen(this);
 	}
 	this->Enabled = true;
 }
 
+Control^ FindControlByName(Control^ parent, String^ name) {
+	for each (Control ^ control in parent->Controls) {
+		if (control->Name == name) {
+			return control;
+		}
+	}
+	return nullptr;
+}
+
+void CourseWorkTestingUI::StartForm::finishTest()
+{
+	std::vector<std::vector<int>*>* choosenAnswers = new std::vector<std::vector<int>*>;
+	std::vector<int>* marks = new std::vector<int>;
+	int testNumber = 0;
+	for each (auto var in allGroupBoxes) {
+		Control^ foundControl;
+		std::string curAnswersIndex = "";
+		Question* curQuestion = testBack->editor->getTest(choosenTestSet, testNumber);
+		choosenAnswers->push_back(new std::vector<int>);
+		int iterator = 0;
+		while (foundControl = FindControlByName(var, "B" + iterator)) {
+			if (curQuestion->isCheckedButton(foundControl)) {
+				curAnswersIndex += std::to_string(iterator) + ",";
+				choosenAnswers->at(testNumber)->push_back(iterator);
+			}
+			iterator++;
+		}
+		if(curAnswersIndex.size() != 0)
+			curAnswersIndex.pop_back();
+		marks->push_back(curQuestion->checkAnswer(curAnswersIndex));
+		testNumber++;
+	}
+	time_t finishTime;
+	std::time(&finishTime);
+	StudentAnswerData* answer = new StudentAnswerData(finishTime - startTime, marks, choosenAnswers);
+	testBack->studentAnswers->addStudentAnswer(testBack->user->getUserName(), testBack->editor->nameOfTests[choosenTestSet], answer);
+	clearControls();
+	clientShowResult();
+}
+void CourseWorkTestingUI::StartForm::clientShowResult()
+{
+	clearControls();
+	buttonReturn->Visible = true;
+	std::vector<Question*> testSet = *testBack->editor->getSetOfTests(testBack->editor->nameOfTests[choosenTestSet]);
+	StudentAnswerData* userResults = testBack->studentAnswers->getStudentAnswers(testBack->user->getUserName(), testBack->editor->nameOfTests[choosenTestSet]);
+	int testNumber = 0;
+	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
+	//getResultsFunc = new std::vector<std::function<std::string()>>();
+	for (auto curTest : testSet) {
+		Question* curQuestion = testBack->editor->getTest(choosenTestSet, testNumber);
+		curTest->displayQuestion(this, testNumber);
+		allGroupBoxes[testNumber]->Enabled = false;
+
+		Control^ markLabel = FindControlByName(allGroupBoxes[testNumber], "labelMark");
+		markLabel->Text = "Received mark: " + userResults->marks->at(testNumber);
+		if (!userResults->choosenAnswers->at(testNumber))
+			continue;
+		Control^ button; 
+		for (int i = 0; i < userResults->choosenAnswers->at(testNumber)->size(); i++) {
+			if(button = FindControlByName(allGroupBoxes[testNumber], "B" + userResults->choosenAnswers->at(testNumber)->at(i))){
+				curQuestion->checkButton(button);
+			}
+		}
+		if(userResults->marks->at(testNumber) != 0)
+			allGroupBoxes[testNumber]->BackColor = testPassedColor;
+		else
+			allGroupBoxes[testNumber]->BackColor = testFailedColor;
+		testNumber++;
+	}
+}
 //void CourseWorkTestingUI::StartForm::showSetsToClient()
 //{
 //	throw gcnew System::NotImplementedException();
@@ -644,8 +918,17 @@ void CourseWorkTestingUI::StartForm::clearControls()
 	curY = 30;
 	xTab = 12;
 	yStartMargin = 37;
-	groupBoxWidth = this->Size.Width - 30;
+	groupBoxWidth = this->Size.Width - rightGroupBoxMargin;
 	controlPanel->Controls->Clear();
 	if(allGroupBoxes)
+	{
 		delete[] allGroupBoxes;
+		allGroupBoxes = nullptr;
+	}
+	//if (getResultsFunc)
+	//{
+	//	delete[] getResultsFunc;
+	//	getResultsFunc = nullptr;
+	//}
 }
+

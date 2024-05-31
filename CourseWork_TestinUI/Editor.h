@@ -20,6 +20,7 @@ public:
 	void deleteTest(int testSetNumber, int nOfTest);
 	void editTest(std::string nameOfSet, int nOfTest, Question* question);
 	Question* getTest(std::string nameOfSet, int nOfTest);
+	Question* getTest(int testSetNumber, int nOfTest);
 
 	void deleteSetOfTests(std::string nameOfSet);
 	void deleteSetOfTests(int setNumber);

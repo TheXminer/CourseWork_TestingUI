@@ -1,6 +1,8 @@
 #pragma once
 #include <vcclr.h>
+#include <functional>
 #include <vector>
+#include <ctime>
 namespace CourseWorkTestingUI {
 
 	using namespace System;
@@ -19,7 +21,7 @@ namespace CourseWorkTestingUI {
 	{
 		int curY;
 		int xTab;
-		int groupBoxWidth, yStartMargin;
+		int groupBoxWidth, yStartMargin, rightGroupBoxMargin;
 		array<GroupBox^, 1>^ allGroupBoxes;
 		int buttonSize = 40, buttonMargin = 20;
 		int choosenTestSet;
@@ -37,11 +39,29 @@ namespace CourseWorkTestingUI {
 		   Bitmap^ iconReturn;
 		   Bitmap^ iconExit;
 		   Bitmap^ iconResults;
-		   Bitmap^ iconView;//
-		const Color^ testFailedColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(192)), static_cast<System::Int32>(static_cast<System::Byte>(255)),
+		   Bitmap^ iconView;
+		   std::time_t startTime;
+		const Color testPassedColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(192)), static_cast<System::Int32>(static_cast<System::Byte>(255)),
 				static_cast<System::Int32>(static_cast<System::Byte>(192)));
-		const Color^ testPassedColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(255)), static_cast<System::Int32>(static_cast<System::Byte>(192)), 
+		const Color testFailedColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(255)), static_cast<System::Int32>(static_cast<System::Byte>(192)),
 				static_cast<System::Int32>(static_cast<System::Byte>(192)));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -63,8 +83,9 @@ namespace CourseWorkTestingUI {
 			//
 			curY = 32;
 			xTab = 12;
+			rightGroupBoxMargin = 50;
 			yStartMargin = 37;
-			groupBoxWidth = this->Size.Width - 30;
+			groupBoxWidth = this->Size.Width - rightGroupBoxMargin;
 			iconDelete = gcnew Bitmap("./ButtonIcons/iconDelete.png");
 			iconDone = gcnew Bitmap("./ButtonIcons/iconDone.png");
 			iconEdit = gcnew Bitmap("./ButtonIcons/iconEdit.png");
@@ -131,7 +152,7 @@ namespace CourseWorkTestingUI {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Dpi;
 			this->AutoScrollMargin = System::Drawing::Size(0, 100);
 			this->BackColor = System::Drawing::Color::White;
-			this->ClientSize = System::Drawing::Size(1203, 631);
+			this->ClientSize = System::Drawing::Size(1225, 631);
 			this->Name = L"StartForm";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"StartForm";
@@ -181,34 +202,10 @@ namespace CourseWorkTestingUI {
 		void choosedEditSetName(int testSetNumber);
 		void clearControls();
 	private:
-		void showTopTestInfo(String^ question, int& curControlY, int number, int mark) {
-		//
-		// QuestionLable
-		//
-		Label^ labelQuestion = gcnew Label();
-		allGroupBoxes[number]->Controls->Add(labelQuestion);
-		labelQuestion->AutoSize = true;
-		labelQuestion->Location = Drawing::Point(6, yStartMargin);
-		labelQuestion->MaximumSize = System::Drawing::Size(groupBoxWidth - 12, 0);
-		labelQuestion->Name = L"labelQuestion";
-		labelQuestion->Size = Drawing::Size(116, 25);
-		labelQuestion->Text = question;
-		curControlY += labelQuestion->Size.Height + 10;
-		//
-		// MarkLable
-		//
-		Label^ labelMark = gcnew Label();
-		allGroupBoxes[number]->Controls->Add(labelMark);
-		labelMark->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point,
-			static_cast<System::Byte>(204)));
-		labelMark->AutoSize = true;
-		labelMark->Location = Drawing::Point(6, curControlY);
-		labelMark->MaximumSize = System::Drawing::Size(groupBoxWidth - 12, 0);
-		labelMark->Name = L"labelMark";
-		labelMark->Size = Drawing::Size(116, 25);
-		labelMark->Text = "Mark: " + mark;
-		curControlY += labelMark->Size.Height + 20;
-	}
+		void finishTest();
+		void clientShowResult();
+		void showTopTestInfo(String^ question, int& curControlY, int number, int mark);
+		void showTestResults();
 		//void TestCreationWindow();
 		//void showSetsToClient();
 		//void showSetsToAdmin();
@@ -281,7 +278,7 @@ namespace CourseWorkTestingUI {
 			Button^ clickedButton = dynamic_cast<Button^>(sender);
 			String^ name = clickedButton->Name->Remove(0, 1);
 			choosenTestSet = Convert::ToInt32(name);
-			//choosedEditSetNa(choosenTestSet);
+			showTestResults();
 		}
 	private:
 		System::Void buttonDeleteTest_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -300,13 +297,19 @@ namespace CourseWorkTestingUI {
 		System::Void buttonStartTestSet_Click(System::Object^ sender, System::EventArgs^ e) {
 			Button^ clickedButton = dynamic_cast<Button^>(sender);
 			String^ name = clickedButton->Name->Remove(0, 1);
+			choosenTestSet = Convert::ToInt32(name);
+			std::time_t curTime;
+			std::time(&curTime);
+			startTime = curTime;
 			choosedStartSet(Convert::ToInt32(name));
 		}
 	private:
 		System::Void buttonViewMyMarks_Click(System::Object^ sender, System::EventArgs^ e) {
-			//Button^ clickedButton = dynamic_cast<Button^>(sender);
-			//String^ name = clickedButton->Name->Remove(0, 1);
+			Button^ clickedButton = dynamic_cast<Button^>(sender);
+			String^ name = clickedButton->Name->Remove(0, 1);
+			choosenTestSet = Convert::ToInt32(name);
 			//choosedStartSet(Convert::ToInt32(name));
+			clientShowResult();
 		}
 	private:
 		System::Void buttonAddTest_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -316,9 +319,7 @@ namespace CourseWorkTestingUI {
 		}
 	private:
 		System::Void buttonFinishTestSet_Click(System::Object^ sender, System::EventArgs^ e) {
-			//Button^ clickedButton = dynamic_cast<Button^>(sender);
-			//String^ name = clickedButton->Name->Remove(0, 1);
-			//choosedStartSet(Convert::ToInt32(name));
+			finishTest();
 		}
 	private: 
 		System::Void buttonReturn_Click(System::Object^ sender, System::EventArgs^ e) {

@@ -97,6 +97,11 @@ Question* Editor::getTest(std::string nameOfSet, int nOfTest) {
 	}
 }
 
+Question* Editor::getTest(int testSetNumber, int nOfTest)
+{
+	return getTest(nameOfTests[testSetNumber], nOfTest);
+}
+
 std::vector<Question*>* Editor::getSetOfTests(std::string nameOfSet) {
 	try {
 		std::vector<Question*>* setOfQuestions = setOfTests.at(nameOfSet);

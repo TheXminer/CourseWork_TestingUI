@@ -43,12 +43,28 @@ std::string SingleChoiceQuestion::getType() const
 
 int SingleChoiceQuestion::checkAnswer(const std::string& answer)
 {
+    if (answer == "")
+        return 0;
     return checkAnswer(std::stoi(answer));
 }
 
 std::string SingleChoiceQuestion::getCorrectAnswers()
 {
     return std::to_string(correctAnswer);
+}
+
+bool SingleChoiceQuestion::isCheckedButton(System::Windows::Forms::Control^ control)
+{
+    using namespace System::Windows::Forms;
+    RadioButton^ radioButton = dynamic_cast<RadioButton^>(control);
+    return radioButton->Checked;
+}
+
+void SingleChoiceQuestion::checkButton(System::Windows::Forms::Control^ control)
+{
+    using namespace System::Windows::Forms;
+    RadioButton^ radioButton = dynamic_cast<RadioButton^>(control); 
+    radioButton->Checked = true;
 }
 
 //void SingleChoiceQuestion::displayQuestionWhithButtons(CourseWorkTestinUI::StartForm^ startForm, int number)

@@ -38,7 +38,7 @@ namespace CourseWorkTestingUI {
 		List<int>^ correctAnswerIndexes;
 		ShowPossibleAnswer^ showPossibleAnswerFunc;
 		QuestionCreate^ questionCreate;
-		String^ testName = "sdasdsd";
+		String^ testName;
 		int mark = 0;
 		Question* createdQuestion;
 
@@ -51,6 +51,7 @@ namespace CourseWorkTestingUI {
 			createdQuestion = nullptr;
 			answers = gcnew List<String^>;
 			correctAnswerIndexes = gcnew List<int>;
+			testName = "";
 			InitializeComponent();
 			this->buttonApply->BackgroundImage = gcnew Bitmap("./ButtonIcons/iconDone.png");
 			this->buttonCancle->BackgroundImage = gcnew Bitmap("./ButtonIcons/iconDelete.png");
@@ -276,7 +277,6 @@ namespace CourseWorkTestingUI {
 			this->buttonApply->Name = L"buttonApply";
 			this->buttonApply->Size = System::Drawing::Size(36, 36);
 			this->buttonApply->TabIndex = 0;
-			//this->buttonApply->Text = L"Appl";
 			this->buttonApply->UseVisualStyleBackColor = true;
 			this->buttonApply->Click += gcnew System::EventHandler(this, &TestEditForm::buttonApply_Click);
 			// 
@@ -287,7 +287,6 @@ namespace CourseWorkTestingUI {
 			this->buttonCancle->Name = L"buttonCancle";
 			this->buttonCancle->Size = System::Drawing::Size(36, 36);
 			this->buttonCancle->TabIndex = 1;
-			//this->buttonCancle->Text = L"Can";
 			this->buttonCancle->UseVisualStyleBackColor = true;
 			this->buttonCancle->Click += gcnew System::EventHandler(this, &TestEditForm::buttonDelete_Click);
 			// 
@@ -361,6 +360,7 @@ namespace CourseWorkTestingUI {
 			this->textBoxMark->Name = L"textBoxMark";
 			this->textBoxMark->Size = System::Drawing::Size(41, 20);
 			this->textBoxMark->TabIndex = 15;
+			this->textBoxMark->Text = L"1";
 			this->textBoxMark->TextChanged += gcnew System::EventHandler(this, &TestEditForm::textBoxMark_TextChanged);
 			// 
 			// TestEditForm
@@ -519,11 +519,7 @@ namespace CourseWorkTestingUI {
 		}
 	private:
 		void removeIndex(int index) {
-			correctAnswerIndexes->Remove(index);
-			for each (auto var in correctAnswerIndexes) {
-				if (var > index)
-					var--;
-			}
+			correctAnswerIndexes->RemoveAt(index);			
 		}
 	private:
 		void editCorrectAnswers(bool isChecked, int itemIndex) {
@@ -531,7 +527,8 @@ namespace CourseWorkTestingUI {
 				correctAnswerIndexes->Add(itemIndex);
 				return;
 			}
-			removeIndex(itemIndex);
+			int findIndex = findIndexInVector(correctAnswerIndexes, itemIndex);
+			removeIndex(findIndex);
 		}
 	private:
 		void answersConvert(std::vector<Answer>& answers) {
@@ -570,6 +567,8 @@ namespace CourseWorkTestingUI {
 			//Answer answ4("4?");
 			//std::vector<Answer > answers = { Answer("1?"),Answer("2?"),Answer("3?"),Answer("4?") };
 			//createdQA = new SingleChoiceQuestion(question, answers, 4, 3);
+			if (answers->Count == 0 || correctAnswerIndexes->Count == 0 || textBoxQuestion->Text == "Enter Your Question Here")
+				return;
 			questionCreate();
 			this->Close();
 		}
@@ -609,7 +608,11 @@ namespace CourseWorkTestingUI {
 			int findIndex = findIndexInVector(correctAnswerIndexes, index);
 			answers->RemoveAt(index);
 			if ((findIndex != -1) ? true : false) {
-				removeIndex(findIndex);
+				removeIndex(findIndex); 
+			}
+			for (int i = 0; i < correctAnswerIndexes->Count; i++) {
+				if (correctAnswerIndexes[i] > index)
+					correctAnswerIndexes[i]--;
 			}
 			redraw();
 			isProcessing = false;
@@ -657,6 +660,12 @@ namespace CourseWorkTestingUI {
 		private: System::Void textBoxMark_TextChanged(System::Object^ sender, System::EventArgs^ e) {
 			TextBox^ markTextBox = dynamic_cast<TextBox^>(sender);
 			int curMark;
+			if (markTextBox->Text->Length == 0)
+			{
+				curMark = 0;
+				markTextBox->Text = curMark.ToString();
+				return;
+			}
 			if (Int32::TryParse(markTextBox->Text, curMark)) {
 				return;
 			}

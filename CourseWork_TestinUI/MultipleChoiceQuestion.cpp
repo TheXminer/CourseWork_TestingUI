@@ -58,7 +58,7 @@ int MultipleChoiceQuestion::checkAnswer(const std::string &answer)
     std::istringstream iss(answer);
     std::string token;
     while (std::getline(iss, token, ',')) {
-        answers.push_back(std::stoi(token) - 1);
+        answers.push_back(std::stoi(token));
     }
     return checkAnswer(answers);
 }
@@ -71,6 +71,20 @@ std::string MultipleChoiceQuestion::getCorrectAnswers()
     }
     correctIndexes.pop_back();
     return correctIndexes;
+}
+
+bool MultipleChoiceQuestion::isCheckedButton(System::Windows::Forms::Control^ control)
+{
+    using namespace System::Windows::Forms;
+    CheckBox^ checkBox = dynamic_cast<CheckBox^>(control);
+    return checkBox->Checked;
+}
+
+void MultipleChoiceQuestion::checkButton(System::Windows::Forms::Control^ control)
+{
+    using namespace System::Windows::Forms;
+    CheckBox^ checkBox = dynamic_cast<CheckBox^>(control);
+    checkBox->Checked = true;
 }
 
 //void MultipleChoiceQuestion::displayQuestionWhithButtons(CourseWorkTestinUI::StartForm^ startForm, int number)

@@ -89,6 +89,21 @@ bool StudentAnswers::deleteStudentAnswers(std::string studentName, std::string n
 	}
 }
 
+std::string convertTime(time_t time) {
+	int seconds = time % 60;
+	std::string secondsStr = std::to_string(seconds) + "s";
+	int minutes = time / 60;
+	if (minutes == 0)
+		return secondsStr;
+	int hours = minutes / 60;
+	minutes %= 60;
+	std::string minutesStr = std::to_string(minutes) + "m";
+	if (hours == 0)
+		return minutesStr + " " + secondsStr;
+	std::string hoursStr = std::to_string(minutes) + "h";
+	return hoursStr + " " + minutesStr + " " + secondsStr;
+}
+
 std::vector<std::vector<std::string>*>* StudentAnswers::getAllTestAnswers(std::string nameOfTest)
 {
 	std::vector<std::vector<std::string>*>* allAnswers = new std::vector<std::vector<std::string>*>;
@@ -100,7 +115,7 @@ std::vector<std::vector<std::string>*>* StudentAnswers::getAllTestAnswers(std::s
 		auto savedMarks = getStudentAnswers(answer.first, nameOfTest);
 		int resultMark = 0;
 		curStudentResult->push_back(std::to_string(resultMark));
-		curStudentResult->push_back("Time " + std::to_string(savedMarks->usedTime));
+		curStudentResult->push_back(/*std::to_string(savedMarks->usedTime)*/convertTime(savedMarks->usedTime));
 		for (auto mark : *savedMarks->marks) {
 			resultMark += mark;
 			curStudentResult->push_back(std::to_string(mark));

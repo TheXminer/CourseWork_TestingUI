@@ -19,12 +19,12 @@ class UserAction;
 class StartTestAction;
 class ViewAllMarksAction;
 
-class User abstract {
+class Client abstract {
     std::string userName;
 protected:
     int authorizeStatus;
 public:
-    User(std::string userName) : userName(userName) { 
+    Client(std::string userName) : userName(userName) { 
         authorizeStatus = Nothing; 
     }
     std::string getUserName() {
@@ -39,33 +39,32 @@ public:
     virtual void showStartScreen(CourseWorkTestingUI::StartForm^ form) = 0;
     virtual void showTestButtons(CourseWorkTestingUI::StartForm^ form, int number) = 0;
 };
-class AdminUser : public User {
+class AdminClient : public Client {
 public:
-    AdminUser(std::string userName) : User(userName) { authorizeStatus = AuthorizedAsAdmin; };
+    AdminClient(std::string userName) : Client(userName) { authorizeStatus = AuthorizedAsAdmin; };
     void showStartScreen(CourseWorkTestingUI::StartForm^ form) override;
     void showTestButtons(CourseWorkTestingUI::StartForm^ form, int number) override;
 };
-class ClientUser : public User {
+class UserClient : public Client {
 public:
-    ClientUser(std::string userName) : User(userName) { authorizeStatus = AuthorizedAsClient; };
+    UserClient(std::string userName) : Client(userName) { authorizeStatus = AuthorizedAsClient; };
     void showStartScreen(CourseWorkTestingUI::StartForm^ form) override;
     void showTestButtons(CourseWorkTestingUI::StartForm^ form, int number) override {};
 };
-class NonauthorizedUser : public User {
+class NonauthorizedClient : public Client {
 public:
-    NonauthorizedUser() : User("no name") { authorizeStatus = NonAuthorized; }
+    NonauthorizedClient() : Client("no name") { authorizeStatus = NonAuthorized; }
     void showStartScreen(CourseWorkTestingUI::StartForm^ form) override;
     void showTestButtons(CourseWorkTestingUI::StartForm^ form, int number) override {};
 };
 
 class ClientAction {
-    CurrentAction* action = nullptr;
 public:
-    User* user;
+    Client* client;
     Editor* editor;
     StudentAnswers* studentAnswers;
     ClientAction();
-    ClientAction(CurrentAction* action, Editor* editor, StudentAnswers* studentAnswers);
+    ClientAction(Editor* editor, StudentAnswers* studentAnswers);
     void login(std::string userName);
     void logout();
     //ClientAction(CurrentAction* action);

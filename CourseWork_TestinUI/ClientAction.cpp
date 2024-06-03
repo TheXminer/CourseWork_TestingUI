@@ -4,10 +4,10 @@ ClientAction::ClientAction()
 {
     editor = new Editor();
     studentAnswers = new StudentAnswers();
-    user = new NonauthorizedUser();
+    client = new NonauthorizedClient();
 }
 
-ClientAction::ClientAction(CurrentAction* action, Editor* editor, StudentAnswers* studentAnswers) {
+ClientAction::ClientAction(Editor* editor, StudentAnswers* studentAnswers) {
     this->editor = editor;
     this->studentAnswers = studentAnswers;
 }
@@ -15,19 +15,19 @@ ClientAction::ClientAction(CurrentAction* action, Editor* editor, StudentAnswers
 void ClientAction::login(std::string userName)
 {
     if (userName == "admin") {
-        delete user;
-        user = new AdminUser(userName);
+        delete client;
+        client = new AdminClient(userName);
     }
     if (userName.find("user") != std::string::npos) {
-        delete user;
-        user = new ClientUser(userName);
+        delete client;
+        client = new UserClient(userName);
     }
 }
 
 void ClientAction::logout()
 {
-    delete user;
-    user = new NonauthorizedUser();
+    delete client;
+    client = new NonauthorizedClient();
 }
 
 //void ClientAction::setAction(CurrentAction* action) {
@@ -340,23 +340,23 @@ void clientShow(CourseWorkTestingUI::StartForm^ form, System::String^ testSetNam
 //    form->clientShowTestSetName(testSetName, number);
 //}
 
-void AdminUser::showStartScreen(CourseWorkTestingUI::StartForm^ form)
+void AdminClient::showStartScreen(CourseWorkTestingUI::StartForm^ form)
 {
         form->showTestSets(&adminShow);
         form->createAddButton(gcnew System::EventHandler(form, &CourseWorkTestingUI::StartForm::buttonAddTestSet_Click));
 }
 
-void AdminUser::showTestButtons(CourseWorkTestingUI::StartForm^ form, int number)
+void AdminClient::showTestButtons(CourseWorkTestingUI::StartForm^ form, int number)
 {
     form->createAdminChoiceTestGB(number);
 }
 
-void ClientUser::showStartScreen(CourseWorkTestingUI::StartForm^ form)
+void UserClient::showStartScreen(CourseWorkTestingUI::StartForm^ form)
 {
         form->showTestSets(&clientShow);
 }
 
-void NonauthorizedUser::showStartScreen(CourseWorkTestingUI::StartForm^ form)
+void NonauthorizedClient::showStartScreen(CourseWorkTestingUI::StartForm^ form)
 {
     form->authorization();
 }

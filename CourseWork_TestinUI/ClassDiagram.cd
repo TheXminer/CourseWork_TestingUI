@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ClientAction">
+    <Position X="5.5" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABBAAAAAAAAAAAQAAAACAAAAAAAABAAAEAA=</HashCode>
+      <FileName>ClientAction.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Editor">
+    <Position X="2.25" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAgAAAAEAEQAAAAAAiQAAAAAAAACAAAAAAAwAQAA=</HashCode>
+      <FileName>Editor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StudentAnswers">
+    <Position X="8.75" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAABAAAAAAAAAAEAAAAAACgAAEUAAAAAACAEg=</HashCode>
+      <FileName>StudentAnswers.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Question">
+    <Position X="11.5" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAIAASAAAAwQAAAAEQAggAAAAgAA=</HashCode>
+      <FileName>Question.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SingleChoiceQuestion">
+    <Position X="13.75" Y="5.25" Width="2.25" />
+    <InheritanceLine Type="Question" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.25" Y="4.625" />
+        <Point X="14.875" Y="4.625" />
+        <Point X="14.875" Y="5.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAACAAAA0AAAEAAAAggAAAAAAA=</HashCode>
+      <FileName>SingleChoiceQuestion.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MultipleChoiceQuestion">
+    <Position X="16.25" Y="5.25" Width="2.25" />
+    <InheritanceLine Type="Question" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.25" Y="4.625" />
+        <Point X="17.375" Y="4.625" />
+        <Point X="17.375" Y="5.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAAIAACAAAAwAAAAAAAAggAAAEAAA=</HashCode>
+      <FileName>MultipleChoiceQuestion.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NonauthorizedClient">
+    <Position X="4.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAQAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ClientAction.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UserClient">
+    <Position X="6.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>ClientAction.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AdminClient">
+    <Position X="3" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>ClientAction.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client">
+    <Position X="4.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAAAAAgAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAEAQAQ=</HashCode>
+      <FileName>ClientAction.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

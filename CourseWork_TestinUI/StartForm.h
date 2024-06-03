@@ -31,6 +31,7 @@ namespace CourseWorkTestingUI {
 	private: System::Windows::Forms::ToolStripMenuItem^ buttonExit;
 	private: System::Windows::Forms::ToolStripButton^ buttonReturn;
 	private: System::Windows::Forms::ToolStripSplitButton^ userToolStripButton;
+	private: System::Windows::Forms::ToolStripLabel^ markLabel;
 		   Bitmap^ iconDelete;
 		   Bitmap^ iconDone;
 		   Bitmap^ iconEdit;
@@ -155,7 +156,6 @@ namespace CourseWorkTestingUI {
 			this->ClientSize = System::Drawing::Size(1225, 631);
 			this->Name = L"StartForm";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
-			this->Text = L"StartForm";
 			this->ResumeLayout(false);
 
 		}

@@ -89,7 +89,7 @@ void CourseWorkTestingUI::StartForm::addTest()
 	//testBack->editor->addTest("faf", extraQuestion3);
 	//testBack->editor->addTest("faf", extraQuestion14);
 	//testBack->editor->addTest("faf", extraQuestion4);
-	testBack->user->showStartScreen(this);
+	testBack->client->showStartScreen(this);
 	//clientBack->setAccess(AuthorizedAsStudent);
 	//extraQuestion->displayQuestion(this, 2);
 	//extraQuestion->displayQuestion(this, 3);
@@ -287,7 +287,7 @@ void CourseWorkTestingUI::StartForm::createSingleChoiceTestGB(String^ question, 
 	/*if (userBack->user->checkAccess() == AuthorizedAsAdmin) {
 		createAdminChoiceTestGB(number);
 	}*/
-	testBack->user->showTestButtons(this, number);
+	testBack->client->showTestButtons(this, number);
 
 	curY += allGroupBoxes[number]->Size.Height;
 }
@@ -324,7 +324,7 @@ void CourseWorkTestingUI::StartForm::createMultipleChoiceTestGB(String^ question
 	controlPanel->Controls->Add(allGroupBoxes[number]);
 	allGroupBoxes[number]->ResumeLayout(false);
 	allGroupBoxes[number]->PerformLayout();
-	if (testBack->user->checkAccess() == AuthorizedAsAdmin) {
+	if (testBack->client->checkAccess() == AuthorizedAsAdmin) {
 		createAdminChoiceTestGB(number);
 	}
 
@@ -460,7 +460,7 @@ void CourseWorkTestingUI::StartForm::adminShowTestSetName(String^ testName, int 
 
 void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int number, int correctAnswerIndex)
 {
-	if (testBack->user->checkAccess() != AuthorizedAsAdmin)
+	if (testBack->client->checkAccess() != AuthorizedAsAdmin)
 		return;
 	GroupBox^ groupBox = allGroupBoxes[number];
 	dynamic_cast<RadioButton^>(groupBox->Controls->Find(L"B" + correctAnswerIndex, false)[0])->Checked = true;
@@ -473,7 +473,7 @@ void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int nu
 
 void CourseWorkTestingUI::StartForm::markCorrectAnswer(int answersNumber, int number, std::vector<int> correctAnswerIndex)
 {
-	if (testBack->user->checkAccess() != AuthorizedAsAdmin)
+	if (testBack->client->checkAccess() != AuthorizedAsAdmin)
 		return;
 	GroupBox^ groupBox = allGroupBoxes[number];
 	for (int answerIndex : correctAnswerIndex) {
@@ -560,7 +560,7 @@ void CourseWorkTestingUI::StartForm::clientShowTestSetName(String^ testName, int
 	//
 	// DeleteButton
 	//
-	if (/*isTestPassed*/testBack->studentAnswers->isTestPassed(testBack->user->getUserName(), msclr::interop::marshal_as<std::string>(testName)))
+	if (/*isTestPassed*/testBack->studentAnswers->isTestPassed(testBack->client->getUserName(), msclr::interop::marshal_as<std::string>(testName)))
 	{
 		startButton->BackgroundImage = iconDone;
 		startButton->Click += gcnew System::EventHandler(this, &StartForm::buttonViewMyMarks_Click);
@@ -629,13 +629,15 @@ void CourseWorkTestingUI::StartForm::showToolBar() {
 	buttonExit = gcnew ToolStripMenuItem();
 	buttonReturn = gcnew ToolStripButton();
 	userToolStripButton = gcnew ToolStripSplitButton();
+	markLabel = gcnew ToolStripLabel();
 	userToolStrip->SuspendLayout();
 	// 
 	// userToolStrip
 	// 
-	userToolStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+	userToolStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
 		this->buttonReturn,
-			this->userToolStripButton
+			this->userToolStripButton,
+				this->markLabel
 	});
 	userToolStrip->Location = System::Drawing::Point(0, 0);
 	userToolStrip->Name = L"userToolStrip";
@@ -650,9 +652,17 @@ void CourseWorkTestingUI::StartForm::showToolBar() {
 	buttonReturn->ImageTransparentColor = System::Drawing::Color::Magenta;
 	buttonReturn->Name = L"buttonReturn";
 	buttonReturn->Size = System::Drawing::Size(23, 22);
-	buttonReturn->Text = L"buttonReturn";
+	//buttonReturn->Text = L"buttonReturn";
 	buttonReturn->Click += gcnew System::EventHandler(this, &StartForm::buttonReturn_Click);
 	buttonReturn->Visible = false;
+	// 
+	// markLabel
+	// 
+	markLabel->ImageTransparentColor = System::Drawing::Color::Magenta;
+	markLabel->Name = L"labelMark";
+	markLabel->Size = System::Drawing::Size(23, 22);
+	//buttonReturn->Text = L"buttonReturn";
+	markLabel->Visible = false;
 	// 
 	// userToolStripButton
 	// 
@@ -661,7 +671,7 @@ void CourseWorkTestingUI::StartForm::showToolBar() {
 	userToolStripButton->ImageTransparentColor = System::Drawing::Color::Magenta;
 	userToolStripButton->Name = L"userToolStripButton";
 	userToolStripButton->Size = System::Drawing::Size(78, 22);
-	userToolStripButton->Text = gcnew System::String(testBack->user->getUserName().c_str());
+	userToolStripButton->Text = gcnew System::String(testBack->client->getUserName().c_str());
 	//userToolStripButton->Margin = System::Windows::Forms::Padding(0, 1, 20, 2);
 	// 
 	// buttonExit
@@ -688,13 +698,15 @@ void CourseWorkTestingUI::StartForm::showToolBar() {
 void CourseWorkTestingUI::StartForm::choosedDeleteSet(int testSetNumber)
 {
 	testBack->editor->deleteSetOfTests(testSetNumber);
-	testBack->user->showStartScreen(this);
+	testBack->client->showStartScreen(this);
 }
 
 void CourseWorkTestingUI::StartForm::choosedStartSet(int testSetNumber)
 {
 	clearControls();
-	//buttonReturn->Visible = true;
+	buttonReturn->Visible = false;
+	buttonExit->Visible = false;
+	this->Text = gcnew String(testBack->editor->nameOfTests[testSetNumber].c_str());
 	std::vector<Question*> testSet = *testBack->editor->getSetOfTests(testBack->editor->nameOfTests[testSetNumber]);
 	int number = 0;
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
@@ -711,6 +723,7 @@ void CourseWorkTestingUI::StartForm::choosedEditSet(int testSetNumber)
 {
 	clearControls();
 	buttonReturn->Visible = true;
+	this->Text = gcnew String(testBack->editor->nameOfTests[testSetNumber].c_str());
 	std::vector<Question*> testSet = *testBack->editor->getSetOfTests(testBack->editor->nameOfTests[testSetNumber]);
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
 	int number = 0;
@@ -729,7 +742,7 @@ void CourseWorkTestingUI::StartForm::choosedDeleteTest(int testNumber)
 	if(testBack->editor->getSetOfTests(testSetName))
 		choosedEditSet(choosenTestSet);
 	else
-		testBack->user->showStartScreen(this);
+		testBack->client->showStartScreen(this);
 }
 
 void CourseWorkTestingUI::StartForm::choosedEditTest(int testNumber)
@@ -752,8 +765,10 @@ void CourseWorkTestingUI::StartForm::choosedReturn()
 {
 	//if (dataGridView->Visible)
 	//	dataGridView->Visible = false;
+	markLabel->Visible = false;
 	buttonReturn->Visible = false;
-	testBack->user->showStartScreen(this);
+	this->Text = "";
+	testBack->client->showStartScreen(this);
 }
 
 void CourseWorkTestingUI::StartForm::showTestSets(void (*showSetFunc)(StartForm^, String^, int))
@@ -771,18 +786,20 @@ void CourseWorkTestingUI::StartForm::showTestSets(void (*showSetFunc)(StartForm^
 
 void CourseWorkTestingUI::StartForm::authorization()
 {
+	markLabel->Visible = false;
 	testBack->logout();
 	AuthorizeForm^ authorizeForm = gcnew AuthorizeForm;
+	this->Text = "";
 	this->Hide();
 	authorizeForm->ShowDialog();
 	String^ userName = authorizeForm->getUserName();
 	testBack->login(msclr::interop::marshal_as<std::string>(userName));
 	delete authorizeForm;
-	testBack->user->showStartScreen(this);
-	if(testBack->user->checkAccess() != NonAuthorized)
+	testBack->client->showStartScreen(this);
+	if(testBack->client->checkAccess() != NonAuthorized)
 	{
 		this->Show();
-		userToolStripButton->Text = gcnew System::String(testBack->user->getUserName().c_str());
+		userToolStripButton->Text = gcnew System::String(testBack->client->getUserName().c_str());
 	}
 }
 
@@ -810,7 +827,7 @@ void CourseWorkTestingUI::StartForm::choosedAddSet()
 	delete testEditorForm;
 	if (testSetName) {
 		testBack->editor->addTestSet(msclr::interop::marshal_as<std::string>(testSetName));
-		testBack->user->showStartScreen(this);
+		testBack->client->showStartScreen(this);
 	}
 	this->Enabled = true;
 }
@@ -828,7 +845,7 @@ void CourseWorkTestingUI::StartForm::choosedEditSetName(int testSetNumber)
 		testBack->editor->changeTestSetName(setName, msclr::interop::marshal_as<std::string>(testSetName));
 		testBack->studentAnswers->changeTestSetName(setName, msclr::interop::marshal_as<std::string>(testSetName));
 		//userBack->editor->addTestSet(msclr::interop::marshal_as<std::string>(testSetName));
-		testBack->user->showStartScreen(this);
+		testBack->client->showStartScreen(this);
 	}
 	this->Enabled = true;
 }
@@ -844,6 +861,7 @@ Control^ FindControlByName(Control^ parent, String^ name) {
 
 void CourseWorkTestingUI::StartForm::finishTest()
 {
+	buttonExit->Visible = true; 
 	std::vector<std::vector<int>*>* choosenAnswers = new std::vector<std::vector<int>*>;
 	std::vector<int>* marks = new std::vector<int>;
 	int testNumber = 0;
@@ -868,7 +886,7 @@ void CourseWorkTestingUI::StartForm::finishTest()
 	time_t finishTime;
 	std::time(&finishTime);
 	StudentAnswerData* answer = new StudentAnswerData(finishTime - startTime, marks, choosenAnswers);
-	testBack->studentAnswers->addStudentAnswer(testBack->user->getUserName(), testBack->editor->nameOfTests[choosenTestSet], answer);
+	testBack->studentAnswers->addStudentAnswer(testBack->client->getUserName(), testBack->editor->nameOfTests[choosenTestSet], answer);
 	clearControls();
 	clientShowResult();
 }
@@ -876,11 +894,14 @@ void CourseWorkTestingUI::StartForm::clientShowResult()
 {
 	clearControls();
 	buttonReturn->Visible = true;
+	markLabel->Visible = true;
+	this->Text = gcnew String(testBack->editor->nameOfTests[choosenTestSet].c_str());
 	std::vector<Question*> testSet = *testBack->editor->getSetOfTests(testBack->editor->nameOfTests[choosenTestSet]);
-	StudentAnswerData* userResults = testBack->studentAnswers->getStudentAnswers(testBack->user->getUserName(), testBack->editor->nameOfTests[choosenTestSet]);
+	StudentAnswerData* userResults = testBack->studentAnswers->getStudentAnswers(testBack->client->getUserName(), testBack->editor->nameOfTests[choosenTestSet]);
 	int testNumber = 0;
 	allGroupBoxes = gcnew array<GroupBox^, 1>(testSet.size());
 	//getResultsFunc = new std::vector<std::function<std::string()>>();
+	int totalMark = 0;
 	for (auto curTest : testSet) {
 		Question* curQuestion = testBack->editor->getTest(choosenTestSet, testNumber);
 		curTest->displayQuestion(this, testNumber);
@@ -888,6 +909,7 @@ void CourseWorkTestingUI::StartForm::clientShowResult()
 
 		Control^ markLabel = FindControlByName(allGroupBoxes[testNumber], "labelMark");
 		markLabel->Text = "Received mark: " + userResults->marks->at(testNumber);
+		totalMark += userResults->marks->at(testNumber);
 		if (!userResults->choosenAnswers->at(testNumber))
 			continue;
 		Control^ button; 
@@ -902,6 +924,7 @@ void CourseWorkTestingUI::StartForm::clientShowResult()
 			allGroupBoxes[testNumber]->BackColor = testFailedColor;
 		testNumber++;
 	}
+	markLabel->Text = "Received mark: " + totalMark.ToString();
 }
 //void CourseWorkTestingUI::StartForm::showSetsToClient()
 //{
